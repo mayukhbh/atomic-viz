@@ -90,7 +90,7 @@ export const AtomBuilder = () => {
     return (
         <div className="w-full h-full relative">
             {/* UI Controls */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 text-white">
+            <div className="absolute top-32 left-4 z-10 bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 text-white">
                 <h2 className="text-xl font-bold mb-4">Atom Builder</h2>
                 <div className="flex gap-2 mb-4">
                     <button onClick={() => addParticle('protons')} className="px-3 py-1 bg-red-500/20 hover:bg-red-500/40 border border-red-500 rounded transition">
@@ -109,7 +109,7 @@ export const AtomBuilder = () => {
             </div>
 
             {/* Stats Panel */}
-            <div className="absolute top-4 right-4 z-10 bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 text-white w-64">
+            <div className="absolute top-32 right-4 z-10 bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 text-white w-64">
                 <div className="text-4xl font-bold text-center mb-2">
                     {element ? element.symbol : '?'}
                 </div>

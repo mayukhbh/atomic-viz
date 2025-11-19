@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Scene } from './components/Scene';
 import { Atom } from './components/Atom';
 import { AtomBuilder } from './components/AtomBuilder';
+import { ELEMENTS } from './data/elements';
 import { Molecule } from './components/Molecule';
 import { ReactionRenderer } from './components/ReactionRenderer';
 import { PeriodicTable } from './components/PeriodicTable';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Atom as AtomIcon, Zap, Play, RotateCcw, ChevronRight, FlaskConical } from 'lucide-react';
+import { Atom as AtomIcon, Zap, Play, RotateCcw, ChevronRight, FlaskConical, Hammer } from 'lucide-react';
 import { REACTIONS } from './data/reactions';
 
 function App() {
-  const [viewMode, setViewMode] = useState('atom'); // 'atom' | 'reaction'
+  const [viewMode, setViewMode] = useState('atom'); // 'atom' | 'reaction' | 'builder'
   const [activeElement, setActiveElement] = useState('U');
   const [activeReactionId, setActiveReactionId] = useState('water-formation');
   const [reactionStage, setReactionStage] = useState(0);
@@ -18,6 +19,8 @@ function App() {
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
 
   const activeReaction = REACTIONS.find(r => r.id === activeReactionId);
+  // Helper to get full element data for UI display
+  const activeElementData = ELEMENTS[activeElement] || ELEMENTS['H'];
 
   useEffect(() => {
     let interval;
@@ -42,11 +45,11 @@ function App() {
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#000' }}>
       {/* 3D Scene Layer */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
-        <Scene>
-          <AnimatePresence mode="wait">
-            {viewMode === 'builder' ? (
-              <AtomBuilder />
-            ) : (
+        {viewMode === 'builder' ? (
+          <AtomBuilder />
+        ) : (
+          <Scene>
+            <AnimatePresence mode="wait">
               <motion.group
                 key="scene-content"
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -56,7 +59,7 @@ function App() {
               >
                 {viewMode === 'atom' && (
                   <Atom
-                    element={activeElement.symbol}
+                    element={activeElement}
                     showElectrons={true}
                     scale={1.5}
                   />
@@ -77,9 +80,9 @@ function App() {
                   </AnimatePresence>
                 )}
               </motion.group>
-            )}
-          </AnimatePresence>
-        </Scene>
+            </AnimatePresence>
+          </Scene>
+        )}
       </div>
 
       {/* UI Overlay Layer */}
@@ -103,47 +106,65 @@ function App() {
             >
               <FlaskConical size={16} /> Reaction Lab
             </button>
+            <button
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'builder' ? 'bg-cyan-500 text-black' : 'text-white hover:bg-white/10'}`}
+              onClick={() => setViewMode('builder')}
+            >
+              <Hammer size={16} /> Builder
+            </button>
           </div>
         </nav>
 
         <div className="absolute bottom-8 left-8 max-w-md pointer-events-auto flex flex-col gap-4">
           {viewMode === 'atom' ? (
             <>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl text-white"
-              >
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-400" />
-                  Current Element: <span className="text-cyan-400">{activeElement}</span>
-                </h2>
+              <div className="text-center mb-8">
+                <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 mb-2 tracking-tight drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                  {activeElementData.name}
+                </h1>
+                <div className="flex items-center justify-center gap-4 text-lg text-cyan-100/80 font-light">
+                  <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                    Atomic Number: <span className="text-white font-bold">{activeElementData.atomicNumber}</span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                    Mass: <span className="text-white font-bold">{activeElementData.mass}</span>
+                  </span>
+                </div>
+                <div className="mt-4 text-white/60 max-w-md mx-auto text-sm leading-relaxed">
+                  {activeElementData.description || "No description available."}
+                </div>
+              </div>
+
+              {/* Element Selector */}
+              <div className="relative group">
                 <button
                   onClick={() => setShowPeriodicTable(!showPeriodicTable)}
-                  className="w-full py-3 bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-all text-sm font-bold tracking-wide"
+                  className="flex items-center gap-2 px-6 py-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-xl hover:bg-white/10 hover:border-cyan-500/50 transition-all duration-300 shadow-lg group-hover:shadow-cyan-500/20"
                 >
-                  {showPeriodicTable ? 'Close Periodic Table' : 'Open Periodic Table'}
+                  <span className="text-2xl font-bold text-cyan-400">{activeElementData.symbol}</span>
+                  <span className="text-white/90 font-medium">Select Element</span>
+                  <ChevronRight className={`w-4 h-4 text-white/50 transition-transform duration-300 ${showPeriodicTable ? 'rotate-90' : ''}`} />
                 </button>
-              </motion.div>
 
-              <AnimatePresence>
-                {showPeriodicTable && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm"
-                    onClick={() => setShowPeriodicTable(false)}
-                  >
-                    <div onClick={e => e.stopPropagation()}>
+                <AnimatePresence>
+                  {showPeriodicTable && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50"
+                    >
                       <PeriodicTable
+                        onSelect={(el) => {
+                          setActiveElement(el);
+                          setShowPeriodicTable(false);
+                        }}
                         activeElement={activeElement}
-                        onSelect={(el) => { setActiveElement(el); setShowPeriodicTable(false); }}
                       />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </>
           ) : (
             <motion.div
