@@ -166,7 +166,7 @@ function App() {
                 </AnimatePresence>
               </div>
             </>
-          ) : (
+          ) : viewMode === 'reaction' ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -224,7 +224,7 @@ function App() {
                 </div>
               </div>
             </motion.div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
