@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scene } from './components/Scene';
 import { Atom } from './components/Atom';
+import { AtomBuilder } from './components/AtomBuilder';
 import { Molecule } from './components/Molecule';
 import { ReactionRenderer } from './components/ReactionRenderer';
 import { PeriodicTable } from './components/PeriodicTable';
@@ -43,25 +44,38 @@ function App() {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
         <Scene>
           <AnimatePresence mode="wait">
-            {viewMode === 'atom' ? (
-              <motion.group
-                key="atom-view"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Atom element={activeElement} />
-              </motion.group>
+            {viewMode === 'builder' ? (
+              <AtomBuilder />
             ) : (
               <motion.group
-                key="reaction-view"
-                initial={{ scale: 0, opacity: 0 }}
+                key="scene-content"
+                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.5 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
               >
-                <ReactionRenderer stage={activeReaction.stages[reactionStage]} />
+                {viewMode === 'atom' && (
+                  <Atom
+                    element={activeElement.symbol}
+                    showElectrons={true}
+                    scale={1.5}
+                  />
+                )}
+                {viewMode === 'reaction' && (
+                  <AnimatePresence mode="wait">
+                    {activeReaction && (
+                      <motion.group
+                        key="reaction-view"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <ReactionRenderer stage={activeReaction.stages[reactionStage]} />
+                      </motion.group>
+                    )}
+                  </AnimatePresence>
+                )}
               </motion.group>
             )}
           </AnimatePresence>
