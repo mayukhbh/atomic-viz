@@ -4,10 +4,11 @@ import { Atom } from './components/Atom';
 import { AtomBuilder } from './components/AtomBuilder';
 import { ELEMENTS } from './data/elements';
 import { Molecule } from './components/Molecule';
+import { MoleculeSandbox } from './components/MoleculeSandbox';
 import { ReactionRenderer } from './components/ReactionRenderer';
 import { PeriodicTable } from './components/PeriodicTable';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Atom as AtomIcon, Zap, Play, RotateCcw, ChevronRight, FlaskConical, Hammer } from 'lucide-react';
+import { Atom as AtomIcon, RotateCcw, Play, Pause, ChevronRight, Search, FlaskConical, Hammer, Box } from 'lucide-react';
 import { REACTIONS } from './data/reactions';
 
 function App() {
@@ -47,6 +48,8 @@ function App() {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
         {viewMode === 'builder' ? (
           <AtomBuilder />
+        ) : viewMode === 'sandbox' ? (
+          <MoleculeSandbox />
         ) : (
           <Scene>
             <AnimatePresence mode="wait">
@@ -101,16 +104,22 @@ function App() {
               <AtomIcon size={16} /> Atom Explorer
             </button>
             <button
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'reaction' ? 'bg-cyan-500 text-black' : 'text-white hover:bg-white/10'}`}
               onClick={() => setViewMode('reaction')}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'reaction' ? 'bg-cyan-500 text-black' : 'text-white hover:bg-white/10'}`}
             >
               <FlaskConical size={16} /> Reaction Lab
             </button>
             <button
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'builder' ? 'bg-cyan-500 text-black' : 'text-white hover:bg-white/10'}`}
               onClick={() => setViewMode('builder')}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'builder' ? 'bg-cyan-500 text-black' : 'text-white hover:bg-white/10'}`}
             >
               <Hammer size={16} /> Builder
+            </button>
+            <button
+              onClick={() => setViewMode('sandbox')}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${viewMode === 'sandbox' ? 'bg-purple-500 text-white' : 'text-white hover:bg-white/10'}`}
+            >
+              <Box size={16} /> Sandbox
             </button>
           </div>
         </nav>
@@ -148,20 +157,13 @@ function App() {
 
                 <AnimatePresence>
                   {showPeriodicTable && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50"
-                    >
-                      <PeriodicTable
-                        onSelect={(el) => {
-                          setActiveElement(el);
-                          setShowPeriodicTable(false);
-                        }}
-                        activeElement={activeElement}
-                      />
-                    </motion.div>
+                    <PeriodicTable
+                      onSelect={(el) => {
+                        setActiveElement(el);
+                        setShowPeriodicTable(false);
+                      }}
+                      activeElement={activeElement}
+                    />
                   )}
                 </AnimatePresence>
               </div>

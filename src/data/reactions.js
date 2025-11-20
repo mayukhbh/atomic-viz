@@ -162,3 +162,12 @@ export const REACTIONS = [
         ]
     }
 ];
+
+export const MOLECULES = {
+    'H2O': { name: 'Water', formula: 'H2O', atoms: { H: 2, O: 1 } },
+    'CH4': { name: 'Methane', formula: 'CH4', atoms: { C: 1, H: 4 } },
+    'CO2': { name: 'Carbon Dioxide', formula: 'CO2', atoms: { C: 1, O: 2 } },
+    'NH3': { name: 'Ammonia', formula: 'NH3', atoms: { N: 1, H: 3 } },
+    'O2': { name: 'Oxygen Gas', formula: 'O2', atoms: { O: 2 } },
+    'H2': { name: 'Hydrogen Gas', formula: 'H2', atoms: { H: 2 } }
+};
