@@ -135,11 +135,10 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 
 ### Screenshots
 
-*(Add screenshots of your application here - Atom Explorer, Reaction Lab, Molecule Sandbox, Periodic Table)*
+<img width="1914" height="1014" alt="image" src="https://github.com/user-attachments/assets/2a842b21-e449-4535-ba1d-ccfc91016330" />
+<img width="1604" height="917" alt="image" src="https://github.com/user-attachments/assets/4c5ce271-9a6e-4d9b-bfcb-f0545ee054e9" />
+<img width="1873" height="967" alt="image" src="https://github.com/user-attachments/assets/71b6ff4b-3486-4bc7-9afd-d1e678e0a407" />
 
-### Live Demo
-
-**[Visit Live Site](#)** *(Add your deployment URL here)*
 
 ---
 
