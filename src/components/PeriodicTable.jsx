@@ -1,14 +1,34 @@
 import React from 'react';
 import { ELEMENTS } from '../data/elements';
 import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 
-export const PeriodicTable = ({ onSelect, activeElement }) => {
+export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
     const elementsList = Object.values(ELEMENTS);
     const activeData = ELEMENTS[activeElement] || ELEMENTS['H'];
 
+    const handleClose = () => {
+        if (onClose) onClose();
+        else onSelect(activeElement);
+    };
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-8" onClick={() => onSelect(activeElement)}>
-            <div className="relative bg-black/80 border border-white/10 rounded-3xl p-8 w-full max-w-7xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-8" onClick={handleClose}>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="relative bg-black/80 border border-white/10 rounded-3xl p-8 w-full max-w-7xl shadow-2xl overflow-hidden"
+                onClick={e => e.stopPropagation()}
+            >
+                {/* Close button */}
+                <button
+                    onClick={handleClose}
+                    className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors z-10"
+                >
+                    <X className="w-6 h-6 text-white/60" />
+                </button>
+
                 <h2 className="text-3xl font-bold mb-8 text-center tracking-[0.2em] text-white/80">PERIODIC TABLE OF ELEMENTS</h2>
 
                 <div className="grid grid-cols-18 gap-2 mb-8" style={{ gridTemplateColumns: 'repeat(18, minmax(0, 1fr))' }}>
@@ -46,7 +66,9 @@ export const PeriodicTable = ({ onSelect, activeElement }) => {
                             <span className="text-xl text-white/40 font-light">{activeData.category}</span>
                         </div>
                         <p className="text-lg text-gray-300 leading-relaxed">
-                            {activeData.description}
+                            {typeof activeData.description === 'string'
+                              ? activeData.description
+                              : activeData.description?.basic || ''}
                         </p>
                         <div className="mt-4 flex gap-6 text-sm text-white/50 font-mono">
                             <span>Mass: <b className="text-white">{activeData.mass}</b></span>
@@ -73,7 +95,7 @@ export const PeriodicTable = ({ onSelect, activeElement }) => {
                         ))}
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

@@ -23,19 +23,21 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 
 ### 🔬 **Atom Explorer**
 - **Interactive 3D Atoms:** Rotate and zoom into any element from the periodic table
-- **Real-time Electron Visualization:** See electron shells orbiting the nucleus with physics-based animations
-- **36+ Elements:** Comprehensive database covering elements from Hydrogen to Krypton, plus key metals (Gold, Silver, Uranium)
-- **Element Information:** Detailed descriptions, atomic mass, and fun facts for each element
+- **Dual Visualization Modes:** Toggle between classic Bohr model and quantum orbital visualization
+- **All 118 Elements:** Complete periodic table from Hydrogen to Oganesson
+- **Quantum Orbitals:** Visualize s, p, d, f orbital shapes with electron probability clouds
+- **Element Information:** Detailed descriptions with High School and University complexity levels
 
 ### 🧪 **Reaction Lab**
-- **Animated Chemical Reactions:** Watch molecules form and break apart in real-time
-- **Multiple Reaction Types:**
-  - Water Formation (H₂ + O₂ → H₂O)
-  - Salt Formation (Na + Cl → NaCl)
-  - Photosynthesis
-  - Methane Combustion
+- **20+ Chemical Reactions:** Comprehensive library covering inorganic, organic, and nuclear reactions
+- **Ball-and-Stick Visualization:** See molecules with proper bond representations
+- **Bond Types:** Single, double, triple covalent bonds, ionic bonds with charge labels, polar bonds with dipole arrows
+- **Reaction Categories:**
+  - **Inorganic:** Water formation, salt formation, rust, acid-base neutralization, ammonia synthesis
+  - **Organic:** Methane/ethanol combustion, photosynthesis, fermentation, esterification
+  - **Nuclear:** Uranium fission, hydrogen fusion, alpha/beta decay
+- **Playback Speed Control:** Adjust animation speed from 0.25x to 4x
 - **Step-by-Step Visualization:** Pause, play, and step through each reaction stage
-- **Smooth Transitions:** Physics-based animations using react-spring
 
 ### 🔨 **Atom Builder (God Mode)**
 - **Build Custom Atoms:** Add protons, neutrons, and electrons particle by particle
@@ -52,11 +54,26 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 - **Recipe Book:** Your discoveries are saved and celebrated
 
 ### 📊 **Interactive Periodic Table**
-- **Full 18-Column Layout:** Authentic periodic table grid
-- **40+ Elements:** Rows 1-4 complete, plus precious metals
-- **Category Color-Coding:** Noble gases, alkali metals, halogens, transition metals, etc.
-- **Live Descriptions:** Click any element to see detailed information and fun facts
+- **Full 18-Column Layout:** Authentic periodic table grid with all 118 elements
+- **Complete Coverage:** All 7 periods including lanthanides and actinides
+- **Category Color-Coding:** Noble gases, alkali metals, halogens, transition metals, metalloids, and more
+- **Live Descriptions:** Click any element to see detailed information at your chosen complexity level
 - **Responsive Design:** Optimized for desktop and tablet viewing
+
+### 📤 **Export & Sharing**
+- **Screenshot Export:** Capture high-quality PNG images of any visualization
+- **3D Model Export:** Download GLTF files for use in other 3D applications
+- **Embed Code:** Generate embed snippets to share visualizations on websites
+
+### 📚 **Guided Tutorials**
+- **Interactive Learning Paths:** Step-by-step tutorials for atomic structure, bonding, and reactions
+- **Dual Complexity Levels:** High School (basic concepts) and University (advanced theory)
+- **3D Annotations:** Contextual labels pointing to relevant parts of the visualization
+- **Progress Tracking:** Navigate through lessons with next/back controls
+
+### 🎓 **Complexity Toggle**
+- **High School Mode:** Simplified explanations focused on core concepts
+- **University Mode:** Advanced content including electron configurations, electronegativity, and molecular orbital theory
 
 ---
 
@@ -106,22 +123,24 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 - [x] Recipe book for discovered molecules
 
 ### ✅ **Phase 2: Enhanced Visualization** (Completed)
-- [x] Expanded periodic table (36+ elements)
+- [x] Expanded periodic table (all 118 elements)
 - [x] Element descriptions and metadata
 - [x] Post-processing effects (Bloom)
 - [x] Smooth reaction animations
 
-### 🚧 **Phase 3: Advanced Chemistry** (In Progress)
-- [ ] Ionic bonding visualization
-- [ ] Covalent vs ionic bond differentiation
-- [ ] Electronegativity indicators
-- [ ] Nuclear decay simulations
+### ✅ **Phase 3: Advanced Chemistry** (Completed)
+- [x] Ionic bonding visualization
+- [x] Covalent vs ionic bond differentiation (single, double, triple, polar bonds)
+- [x] Quantum orbital visualization (s, p, d, f orbitals)
+- [x] Nuclear reactions (fission, fusion, decay)
+- [x] 20+ reaction library
 
-### 📋 **Phase 4: Educational Tools** (Planned)
-- [ ] Quiz mode with interactive challenges
-- [ ] Save/load custom molecules
-- [ ] Export 3D models for printing
-- [ ] Collaborative molecule building
+### ✅ **Phase 4: Educational Tools** (Completed)
+- [x] Guided tutorial system with step-by-step lessons
+- [x] Complexity toggle (High School / University)
+- [x] Export screenshots (PNG)
+- [x] Export 3D models (GLTF)
+- [x] Playback speed control
 
 ### 🌐 **Phase 5: Deployment & Scale** (Planned)
 - [ ] Progressive Web App (PWA)
@@ -180,21 +199,35 @@ npm run preview
 ```
 atomic-viz/
 ├── src/
-│   ├── components/          # React components
-│   │   ├── Atom.jsx        # 3D atom visualization
-│   │   ├── AtomBuilder.jsx # Interactive atom builder
-│   │   ├── Molecule.jsx    # Molecule renderer
-│   │   ├── MoleculeSandbox.jsx # Drag-drop sandbox
-│   │   ├── PeriodicTable.jsx   # Interactive table
-│   │   ├── ReactionRenderer.jsx # Reaction animations
-│   │   └── Scene.jsx       # 3D scene setup
-│   ├── data/               # Static data
-│   │   ├── elements.js     # Element properties & descriptions
-│   │   └── reactions.js    # Reaction definitions
-│   ├── App.jsx             # Main application
-│   ├── index.css           # Global styles
-│   └── main.jsx            # Entry point
-├── public/                 # Static assets
+│   ├── components/              # React components
+│   │   ├── atoms/              # Atom visualization modules
+│   │   │   ├── BohrModel.jsx   # Classic electron shell visualization
+│   │   │   └── QuantumOrbitals.jsx # s/p/d/f orbital shapes
+│   │   ├── bonds/              # Bond visualization components
+│   │   │   ├── CovalentBond.jsx
+│   │   │   ├── IonicBond.jsx
+│   │   │   └── PolarBond.jsx
+│   │   ├── export/             # Export functionality
+│   │   │   └── ExportPanel.jsx
+│   │   ├── tutorials/          # Tutorial system
+│   │   │   ├── TutorialMenu.jsx
+│   │   │   └── TutorialOverlay.jsx
+│   │   ├── Atom.jsx            # 3D atom visualization
+│   │   ├── PeriodicTable.jsx   # Interactive table (118 elements)
+│   │   └── ReactionRenderer.jsx # Ball-and-stick reaction animations
+│   ├── context/                # React context providers
+│   │   └── SettingsContext.jsx # Global settings (complexity, orbital mode)
+│   ├── data/                   # Static data
+│   │   ├── elements.js         # All 118 elements with descriptions
+│   │   ├── reactions.js        # 20+ reaction definitions
+│   │   └── tutorials/          # Tutorial content
+│   ├── utils/                  # Utility functions
+│   │   ├── orbitalGeometry.js  # Orbital shape mathematics
+│   │   └── exportHelpers.js    # Export utilities
+│   ├── App.jsx                 # Main application
+│   ├── index.css               # Global styles
+│   └── main.jsx                # Entry point
+├── public/                     # Static assets
 ├── package.json
 └── README.md
 ```

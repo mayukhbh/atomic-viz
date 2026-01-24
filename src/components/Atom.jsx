@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import { Sphere, Text, Trail } from '@react-three/drei';
 import * as THREE from 'three';
 import { ELEMENTS } from '../data/elements';
+import { BohrModel } from './atoms/BohrModel';
+import { QuantumOrbitals } from './atoms/QuantumOrbitals';
 
 const Electron = ({ radius, speed, offset, color }) => {
     const ref = useRef();
@@ -28,13 +30,19 @@ const Electron = ({ radius, speed, offset, color }) => {
     );
 };
 
-export const Atom = ({ element = 'H', position = [0, 0, 0], scale = 1, showElectrons = true }) => {
+export const Atom = ({
+    element = 'H',
+    position = [0, 0, 0],
+    scale = 1,
+    showElectrons = true,
+    orbitalMode = 'bohr' // 'bohr' or 'quantum'
+}) => {
     const data = ELEMENTS[element] || ELEMENTS['H']; // Fallback
     const group = useRef();
 
-    // Generate electron orbits
+    // Generate electron orbits for legacy Bohr model (used when BohrModel component isn't available)
     const electrons = useMemo(() => {
-        if (!showElectrons) return [];
+        if (!showElectrons || orbitalMode === 'quantum') return [];
         const eList = [];
         let shellRadius = data.radius * 1.5;
 
@@ -51,7 +59,7 @@ export const Atom = ({ element = 'H', position = [0, 0, 0], scale = 1, showElect
             shellRadius += 0.5;
         });
         return eList;
-    }, [data, showElectrons]);
+    }, [data, showElectrons, orbitalMode]);
 
     return (
         <group position={position} scale={scale} ref={group}>
@@ -84,10 +92,22 @@ export const Atom = ({ element = 'H', position = [0, 0, 0], scale = 1, showElect
                 {data.symbol}
             </Text>
 
-            {/* Electrons */}
-            {showElectrons && electrons.map((e) => (
-                <Electron key={e.id} {...e} />
-            ))}
+            {/* Electron visualization - switches between Bohr and Quantum modes */}
+            {showElectrons && orbitalMode === 'bohr' && (
+                <BohrModel
+                    elementData={data}
+                    showOrbitalRings={true}
+                    electronColor="#00ffff"
+                    ringColor="#ffffff"
+                />
+            )}
+
+            {showElectrons && orbitalMode === 'quantum' && (
+                <QuantumOrbitals
+                    elementData={data}
+                    scale={1.2}
+                />
+            )}
         </group>
     );
 };
