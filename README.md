@@ -209,16 +209,7 @@ This is a portfolio project, but feedback and suggestions are always welcome! Fe
 
 ## 👨‍💻 About the Developer
 
-**Mayukh Bhattacharyya** - Product-focused engineer passionate about building educational tools that make learning interactive and fun.
-
-**Skills Demonstrated:**
-- ✅ Modern React development (hooks, state management, component architecture)
-- ✅ 3D graphics and WebGL with Three.js
-- ✅ Complex animation systems
-- ✅ UI/UX design and implementation
-- ✅ Data modeling and chemistry domain knowledge
-- ✅ Performance optimization for real-time rendering
-- ✅ Product thinking and roadmap planning
+Product Manager having fun building applications with AI agents. 
 
 ---
 
