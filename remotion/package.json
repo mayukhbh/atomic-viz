@@ -1,0 +1,24 @@
+{
+  "name": "atomicviz-demo",
+  "version": "1.0.0",
+  "description": "AtomicViz premium demo video - 4K",
+  "type": "module",
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion bundle",
+    "render": "remotion render Demo out/atomicviz-demo-4k.mp4",
+    "render:1080": "remotion render Demo out/atomicviz-demo-1080p.mp4 --scale=0.5"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3"
+  }
+}
