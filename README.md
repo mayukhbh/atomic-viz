@@ -29,15 +29,23 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 - **Element Information:** Detailed descriptions with High School and University complexity levels
 
 ### 🧪 **Reaction Lab**
-- **20+ Chemical Reactions:** Comprehensive library covering inorganic, organic, and nuclear reactions
-- **Ball-and-Stick Visualization:** See molecules with proper bond representations
-- **Bond Types:** Single, double, triple covalent bonds, ionic bonds with charge labels, polar bonds with dipole arrows
+- **Smooth Reaction Engine:** Reactants morph continuously into products with eased, frame-accurate interpolation — no more snapping between discrete frames
+- **Live Energy Diagrams:** Every reaction renders a reaction-coordinate energy profile (reactants → activation barrier → products) with a marker that rides the curve as the reaction plays, and honours the sign of ΔH
+- **20+ Chemical Reactions:** Comprehensive library covering inorganic, organic, nuclear, and advanced reactions, filterable by domain
+- **Bond Types:** Single, double, triple covalent bonds rendered as parallel cylinders, plus ionic and polar bonds
 - **Reaction Categories:**
-  - **Inorganic:** Water formation, salt formation, rust, acid-base neutralization, ammonia synthesis
-  - **Organic:** Methane/ethanol combustion, photosynthesis, fermentation, esterification
+  - **Inorganic:** Water formation, salt formation, rust, acid-base neutralization, ammonia synthesis, sulfuric acid
+  - **Organic:** Methane/ethanol combustion, photosynthesis, fermentation, esterification, hydrogenation
   - **Nuclear:** Uranium fission, hydrogen fusion, alpha/beta decay
-- **Playback Speed Control:** Adjust animation speed from 0.25x to 4x
-- **Step-by-Step Visualization:** Pause, play, and step through each reaction stage
+  - **Advanced:** Electrochemistry, polymerization, ATP synthesis
+- **Scrub & Playback:** Drag the timeline to any point, adjust speed 0.25x–4x, play/pause/replay
+
+### 🧬 **Organic Chemistry Lab**
+- **Functional-Group Library:** 18 organic molecules organised by class — alkanes, alkenes, alkynes, alcohols, aldehydes, ketones, carboxylic acids, esters, amines and aromatics
+- **Three Render Modes:** Ball-and-stick, space-filling (van der Waals), and wireframe — switch instantly on any molecule
+- **Functional-Group Highlighting:** Dims the carbon skeleton and spotlights the reactive group (–OH, C=O, –COOH, ring …) so the chemistry that matters stands out
+- **True 3D Geometry:** Structures are grown from a procedural engine using correct sp³/sp² vertex geometry and standard bond lengths, then auto-fitted to frame — methane is a perfect tetrahedron, benzene a flat aromatic ring
+- **Camera-Facing Labels:** Billboarded element labels stay legible from every angle
 
 ### 🔨 **Atom Builder (God Mode)**
 - **Build Custom Atoms:** Add protons, neutrons, and electrons particle by particle
@@ -91,7 +99,7 @@ AtomicViz is a cutting-edge educational platform that brings chemistry to life t
 - **@react-three/postprocessing 3.0** - Bloom effects and visual polish
 
 ### **Animation Libraries**
-- **Framer Motion 10.18** - UI animations and transitions
+- **Framer Motion 11** - UI animations and transitions (React 19 compatible)
 - **@react-spring/three 10.0** - Physics-based 3D animations
 
 ### **UI/UX Enhancements**

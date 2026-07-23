@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Sphere, Float, Stars } from '@react-three/drei';
+import { OrbitControls, Sphere, Float, Stars } from '@react-three/drei';
 import { ELEMENTS } from '../data/elements';
 import { Atom } from './Atom';
+import { Label3D as Text } from './viewer/Label3D';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Zap, CheckCircle, RotateCcw } from 'lucide-react';
