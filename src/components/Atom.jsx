@@ -1,8 +1,9 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Sphere, Text, Trail } from '@react-three/drei';
+import { Sphere, Trail } from '@react-three/drei';
 import * as THREE from 'three';
 import { ELEMENTS } from '../data/elements';
+import { Label3D as Text } from './viewer/Label3D';
 import { BohrModel } from './atoms/BohrModel';
 import { QuantumOrbitals } from './atoms/QuantumOrbitals';
 

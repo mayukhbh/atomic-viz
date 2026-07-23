@@ -1,21 +1,16 @@
 
 import React, { useState, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Sphere, Text, Float, Line, Stars } from '@react-three/drei';
+import { OrbitControls, Sphere, Float, Line, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { ELEMENTS } from '../data/elements';
+import { Label3D as Text } from './viewer/Label3D';
 import { MOLECULES } from '../data/reactions';
 
 // Simple UUID generator to avoid dependencies
 const uuid = () => Math.random().toString(36).substr(2, 9);
-// We will use standard mesh for dragging for now to keep it simple and robust
-import { useDrag } from '@use-gesture/react'; // We might need to install this, or use Drei's PivotControls/DragControls
-// Actually, let's use Drei's DragControls or simple raycasting for V1.
-// PivotControls is good but adds a gizmo.
-// Let's try a custom DraggableAtom component using useDrag logic or simple pointer events.
-
-// Since we might not have use-gesture installed, let's check package.json or just use R3F events.
-// R3F events (onPointerDown, onPointerMove, onPointerUp) are sufficient for basic dragging on a plane.
+// Dragging uses R3F pointer events (onPointerDown/Move/Up) raycast onto a virtual plane —
+// no extra gesture library required.
 
 const DraggableAtom = ({ id, element, position, onDrag, onDragEnd }) => {
     const [isDragging, setIsDragging] = useState(false);
