@@ -51,14 +51,32 @@ function AtomMesh({ element, position, radius, mode, dim, highlight }) {
   );
 }
 
-function BondMesh({ start, end, order = 1, btype, mode, dim, planeNormal }) {
+function HalfCylinder({ color, radius, length, sign, offset }) {
+  // sign -1 → half toward `start`; +1 → half toward `end` (local +Y points to end)
+  return (
+    <mesh position={[offset, (sign * length) / 4, 0]} scale={[1, length / 2, 1]}>
+      <cylinderGeometry args={[radius, radius, 1, 20]} />
+      <meshPhysicalMaterial
+        color={color}
+        roughness={0.28}
+        metalness={0.15}
+        clearcoat={0.7}
+        clearcoatRoughness={0.2}
+        emissive={color}
+        emissiveIntensity={0.14}
+        envMapIntensity={0.9}
+      />
+    </mesh>
+  );
+}
+
+function BondMesh({ start, end, order = 1, btype, mode, dim, planeNormal, startColor, endColor }) {
   const startVec = useMemo(() => new THREE.Vector3(...start), [start]);
   const endVec = useMemo(() => new THREE.Vector3(...end), [end]);
   const { mid, quat, length, offsetDir } = useMemo(() => {
     const dir = new THREE.Vector3().subVectors(endVec, startVec);
     const len = dir.length();
     const q = new THREE.Quaternion().setFromUnitVectors(UP, dir.clone().normalize());
-    // offset direction for multi-order bonds: perpendicular to bond, within molecule plane
     let perp = new THREE.Vector3().crossVectors(dir, planeNormal || new THREE.Vector3(0, 0, 1));
     if (perp.lengthSq() < 1e-6) perp = new THREE.Vector3(1, 0, 0);
     perp.normalize();
@@ -70,37 +88,40 @@ function BondMesh({ start, end, order = 1, btype, mode, dim, planeNormal }) {
     };
   }, [startVec, endVec, planeNormal]);
 
-  const color = btype && BOND_COLORS[btype] ? BOND_COLORS[btype] : '#c9d2dc';
-  const radius = mode === 'wireframe' ? 0.045 : 0.09;
+  // Polar/ionic bonds keep their meaningful typed color; covalent bonds are split-coloured
+  // by the two atoms they join (the classic vivid ball-and-stick look).
+  const typed = btype === 'polar' || btype === 'ionic';
+  const cA = typed ? BOND_COLORS[btype] : (startColor || '#c9d2dc');
+  const cB = typed ? BOND_COLORS[btype] : (endColor || '#c9d2dc');
+  const radius = mode === 'wireframe' ? 0.045 : 0.085;
   const count = order === 3 ? 3 : order === 2 ? 2 : 1;
-  const spacing = 0.16;
+  const spacing = 0.17;
   const euler = new THREE.Euler().setFromQuaternion(quat);
 
   return (
     <group position={mid} rotation={[euler.x, euler.y, euler.z]}>
-      {Array.from({ length: count }).map((_, i) => {
-        const off = count === 1 ? 0 : (i - (count - 1) / 2) * spacing;
-        const local = offsetDir.clone().applyQuaternion(quat.clone().invert()).multiplyScalar(off);
-        return (
-          <mesh key={i} position={[local.x, local.y, local.z]} scale={[1, length, 1]}>
-            <cylinderGeometry args={[radius, radius, 1, 20]} />
-            <meshPhysicalMaterial
-              color={color}
-              roughness={0.3}
-              metalness={0.2}
-              clearcoat={0.6}
-              emissive={color}
-              emissiveIntensity={0.06}
-              transparent={dim}
-              opacity={dim ? 0.15 : 1}
-            />
+      <group visible={!dim}>
+        {Array.from({ length: count }).map((_, i) => {
+          const off = count === 1 ? 0 : (i - (count - 1) / 2) * spacing;
+          const local = offsetDir.clone().applyQuaternion(quat.clone().invert()).multiplyScalar(off);
+          return (
+            <group key={i} position={[local.x, local.y, local.z]}>
+              <HalfCylinder color={cA} radius={radius} length={length} sign={-1} offset={0} />
+              <HalfCylinder color={cB} radius={radius} length={length} sign={1} offset={0} />
+            </group>
+          );
+        })}
+        {btype === 'aromatic' && (
+          <mesh scale={[1, length, 1]}>
+            <cylinderGeometry args={[radius * 0.5, radius * 0.5, 1, 12]} />
+            <meshBasicMaterial color="#ffd27f" transparent opacity={0.4} />
           </mesh>
-        );
-      })}
-      {btype === 'aromatic' && (
+        )}
+      </group>
+      {dim && (
         <mesh scale={[1, length, 1]}>
-          <cylinderGeometry args={[radius * 0.5, radius * 0.5, 1, 12]} />
-          <meshBasicMaterial color="#ffd27f" transparent opacity={dim ? 0.1 : 0.35} />
+          <cylinderGeometry args={[radius, radius, 1, 12]} />
+          <meshBasicMaterial color="#5b6472" transparent opacity={0.15} />
         </mesh>
       )}
     </group>
@@ -198,6 +219,8 @@ export function MoleculeView({
               mode={mode}
               dim={fgBond}
               planeNormal={planeNormal}
+              startColor={cpk(a1.el).color}
+              endColor={cpk(a2.el).color}
             />
           );
         })}

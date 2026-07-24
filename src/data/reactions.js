@@ -1,3 +1,31 @@
+// Helper: build a flat benzene ring (atoms + bonds) for reaction stages.
+// Returns stable-id atoms/bonds plus geometry helpers so substituents line up.
+const benzeneRing = (cx, cy, { prefix = '', skipH = [], rC = 1.2, rH = 2.05 } = {}) => {
+  const atoms = [];
+  const bonds = [];
+  const cIds = [];
+  const angle = (i) => (i / 6) * Math.PI * 2 + Math.PI / 6;
+  for (let i = 0; i < 6; i++) {
+    const a = angle(i);
+    cIds.push(`${prefix}c${i}`);
+    atoms.push({ id: `${prefix}c${i}`, element: 'C', position: [cx + Math.cos(a) * rC, cy + Math.sin(a) * rC, 0] });
+  }
+  for (let i = 0; i < 6; i++) {
+    bonds.push({ start: cIds[i], end: cIds[(i + 1) % 6], type: i % 2 === 0 ? 'double' : 'single' });
+  }
+  for (let i = 0; i < 6; i++) {
+    if (skipH.includes(i)) continue;
+    const a = angle(i);
+    atoms.push({ id: `${prefix}h${i}`, element: 'H', position: [cx + Math.cos(a) * rH, cy + Math.sin(a) * rH, 0] });
+    bonds.push({ start: `${prefix}c${i}`, end: `${prefix}h${i}`, type: 'single' });
+  }
+  const site = (i, dist) => {
+    const a = angle(i);
+    return [cx + Math.cos(a) * dist, cy + Math.sin(a) * dist, 0];
+  };
+  return { atoms, bonds, cIds, site };
+};
+
 export const REACTIONS = [
   // ============ INORGANIC REACTIONS ============
   {
@@ -596,6 +624,154 @@ export const REACTIONS = [
     ]
   },
 
+  // ============ AROMATIC REACTIONS ============
+  {
+    id: 'nitration',
+    name: 'Benzene Nitration',
+    type: 'Chemical',
+    domain: 'aromatic',
+    level: 'advanced',
+    equation: 'C₆H₆ + HNO₃ → C₆H₅NO₂ + H₂O',
+    enthalpy: -110,
+    description: {
+      basic: "Benzene reacts with nitric acid so that a nitro group (–NO₂) replaces one hydrogen on the ring.",
+      advanced: "A classic electrophilic aromatic substitution. Nitric acid and sulfuric acid generate the nitronium ion (NO₂⁺), which attacks the aromatic π-system; loss of H⁺ restores aromaticity and water is released."
+    },
+    stages: (() => {
+      const r0 = benzeneRing(-2.6, 0);
+      const s0 = { atoms: [...r0.atoms,
+          { id: 'n', element: 'N', position: [3.0, 0, 0] }, { id: 'o1', element: 'O', position: [3.7, 0.7, 0] },
+          { id: 'o2', element: 'O', position: [3.7, -0.7, 0] }, { id: 'o3', element: 'O', position: [2.3, -0.6, 0] },
+          { id: 'ho', element: 'H', position: [1.9, -1.1, 0] }],
+        bonds: [...r0.bonds, { start: 'n', end: 'o1', type: 'double' }, { start: 'n', end: 'o2', type: 'double' },
+          { start: 'n', end: 'o3', type: 'single' }, { start: 'o3', end: 'ho', type: 'polar' }] };
+      const r1 = benzeneRing(-2.6, 0, { skipH: [0] });
+      const n = r1.site(0, 2.6);
+      const s1 = { atoms: [...r1.atoms,
+          { id: 'n', element: 'N', position: n }, { id: 'o1', element: 'O', position: [n[0] + 0.3, n[1] + 1.1, 0] },
+          { id: 'o2', element: 'O', position: [n[0] + 1.1, n[1] - 0.1, 0] },
+          { id: 'o3', element: 'O', position: [2.2, 2.0, 0] }, { id: 'ho', element: 'H', position: [2.9, 2.3, 0] },
+          { id: 'h0', element: 'H', position: [1.6, 2.4, 0] }],
+        bonds: [...r1.bonds, { start: 'c0', end: 'n', type: 'single' }, { start: 'n', end: 'o1', type: 'double' },
+          { start: 'n', end: 'o2', type: 'single' }, { start: 'o3', end: 'h0', type: 'polar' }, { start: 'o3', end: 'ho', type: 'polar' }] };
+      return [s0, s1];
+    })()
+  },
+  {
+    id: 'bromination',
+    name: 'Benzene Bromination',
+    type: 'Chemical',
+    domain: 'aromatic',
+    level: 'advanced',
+    equation: 'C₆H₆ + Br₂ → C₆H₅Br + HBr',
+    enthalpy: -45,
+    description: {
+      basic: "With an iron catalyst, bromine swaps one hydrogen on the benzene ring for a bromine atom.",
+      advanced: "FeBr₃ polarises Br₂ to generate Br⁺, the electrophile. It adds to the ring to form an arenium (Wheland) intermediate; deprotonation regenerates the aromatic system and releases HBr."
+    },
+    stages: (() => {
+      const r0 = benzeneRing(-2.4, 0);
+      const s0 = { atoms: [...r0.atoms, { id: 'br1', element: 'Br', position: [2.6, 0, 0] }, { id: 'br2', element: 'Br', position: [3.9, 0, 0] }],
+        bonds: [...r0.bonds, { start: 'br1', end: 'br2', type: 'single' }] };
+      const r1 = benzeneRing(-2.4, 0, { skipH: [0] });
+      const br1 = r1.site(0, 3.0);
+      const s1 = { atoms: [...r1.atoms, { id: 'br1', element: 'Br', position: br1 },
+          { id: 'br2', element: 'Br', position: [2.5, 2.2, 0] }, { id: 'h0', element: 'H', position: [3.3, 2.3, 0] }],
+        bonds: [...r1.bonds, { start: 'c0', end: 'br1', type: 'polar' }, { start: 'br2', end: 'h0', type: 'polar' }] };
+      return [s0, s1];
+    })()
+  },
+  {
+    id: 'benzene-hydrogenation',
+    name: 'Benzene Hydrogenation',
+    type: 'Chemical',
+    domain: 'aromatic',
+    level: 'advanced',
+    equation: 'C₆H₆ + 3H₂ → C₆H₁₂',
+    enthalpy: -208,
+    description: {
+      basic: "Under pressure with a metal catalyst, benzene adds three hydrogen molecules to become cyclohexane.",
+      advanced: "Complete hydrogenation over Ni or Pt saturates the ring. Because the aromatic system is unusually stable, the enthalpy released (~208 kJ/mol) is less than three times that of a normal alkene — direct evidence of aromatic resonance stabilisation."
+    },
+    stages: (() => {
+      const r0 = benzeneRing(0, 0);
+      const h2 = [];
+      [[3.2, 1.2], [3.2, -1.2], [-3.4, 0]].forEach(([x, y], k) => {
+        h2.push({ id: `ha${k}`, element: 'H', position: [x, y, 0] });
+        h2.push({ id: `hb${k}`, element: 'H', position: [x + 0.7, y, 0] });
+      });
+      const s0 = { atoms: [...r0.atoms, ...h2],
+        bonds: [...r0.bonds, { start: 'ha0', end: 'hb0', type: 'single' }, { start: 'ha1', end: 'hb1', type: 'single' }, { start: 'ha2', end: 'hb2', type: 'single' }] };
+      const r1 = benzeneRing(0, 0);
+      r1.bonds.forEach((b) => { if (b.type === 'double') b.type = 'single'; });
+      const map = ['ha0', 'hb0', 'ha1', 'hb1', 'ha2', 'hb2'];
+      const extra = [], extraBonds = [];
+      for (let i = 0; i < 6; i++) {
+        const p = r1.site(i, 1.9);
+        extra.push({ id: map[i], element: 'H', position: [p[0], p[1], 0.6] });
+        extraBonds.push({ start: `c${i}`, end: map[i], type: 'single' });
+      }
+      const s1 = { atoms: [...r1.atoms, ...extra], bonds: [...r1.bonds, ...extraBonds] };
+      return [s0, s1];
+    })()
+  },
+  {
+    id: 'methane-chlorination',
+    name: 'Methane Chlorination',
+    type: 'Chemical',
+    domain: 'organic',
+    level: 'advanced',
+    equation: 'CH₄ + Cl₂ → CH₃Cl + HCl',
+    enthalpy: -99,
+    description: {
+      basic: "In UV light, chlorine replaces one hydrogen of methane to make chloromethane and hydrogen chloride.",
+      advanced: "A free-radical substitution: UV light homolyses Cl₂ into chlorine radicals (initiation), which abstract H and propagate a chain (propagation) until radicals combine (termination). Further substitution gives CH₂Cl₂, CHCl₃ and CCl₄."
+    },
+    stages: [
+      { atoms: [
+          { id: 'c1', element: 'C', position: [-2, 0, 0] }, { id: 'h1', element: 'H', position: [-2, 1, 0] },
+          { id: 'h2', element: 'H', position: [-2, -1, 0] }, { id: 'h3', element: 'H', position: [-3, 0, 0] },
+          { id: 'h4', element: 'H', position: [-1, 0, 0] },
+          { id: 'cl1', element: 'Cl', position: [2, 0, 0] }, { id: 'cl2', element: 'Cl', position: [3.2, 0, 0] }],
+        bonds: [ { start: 'c1', end: 'h1', type: 'single' }, { start: 'c1', end: 'h2', type: 'single' },
+          { start: 'c1', end: 'h3', type: 'single' }, { start: 'c1', end: 'h4', type: 'single' }, { start: 'cl1', end: 'cl2', type: 'single' }] },
+      { atoms: [
+          { id: 'c1', element: 'C', position: [-0.5, 0, 0] }, { id: 'h1', element: 'H', position: [-0.5, 1, 0] },
+          { id: 'h2', element: 'H', position: [-0.5, -1, 0] }, { id: 'h3', element: 'H', position: [-1.5, -0.4, 0] },
+          { id: 'h4', element: 'H', position: [2.6, 1.6, 0] },
+          { id: 'cl1', element: 'Cl', position: [0.8, 0.3, 0] }, { id: 'cl2', element: 'Cl', position: [3.4, 1.4, 0] }],
+        bonds: [ { start: 'c1', end: 'h1', type: 'single' }, { start: 'c1', end: 'h2', type: 'single' },
+          { start: 'c1', end: 'h3', type: 'single' }, { start: 'c1', end: 'cl1', type: 'polar' }, { start: 'cl2', end: 'h4', type: 'polar' }] }
+    ]
+  },
+  {
+    id: 'thermite',
+    name: 'Thermite Reaction',
+    type: 'Chemical',
+    domain: 'advanced',
+    level: 'advanced',
+    equation: 'Fe₂O₃ + 2Al → 2Fe + Al₂O₃',
+    enthalpy: -851,
+    description: {
+      basic: "Aluminium rips oxygen away from iron oxide, releasing so much heat it produces molten iron.",
+      advanced: "A highly exothermic thermite (aluminothermic) redox reaction. Aluminium is a stronger reducing agent than iron, so it reduces Fe³⁺ to metallic iron while being oxidised to Al₂O₃, reaching temperatures above 2500 °C — used for welding rail track."
+    },
+    stages: [
+      { atoms: [
+          { id: 'fe1', element: 'Fe', position: [-2.2, 0.7, 0] }, { id: 'fe2', element: 'Fe', position: [-2.2, -0.7, 0] },
+          { id: 'o1', element: 'O', position: [-1.1, 1.1, 0] }, { id: 'o2', element: 'O', position: [-1.1, 0, 0] }, { id: 'o3', element: 'O', position: [-1.1, -1.1, 0] },
+          { id: 'al1', element: 'Al', position: [2.2, 0.7, 0] }, { id: 'al2', element: 'Al', position: [2.2, -0.7, 0] }],
+        bonds: [ { start: 'fe1', end: 'o1', type: 'ionic' }, { start: 'fe1', end: 'o2', type: 'ionic' },
+          { start: 'fe2', end: 'o2', type: 'ionic' }, { start: 'fe2', end: 'o3', type: 'ionic' }] },
+      { atoms: [
+          { id: 'fe1', element: 'Fe', position: [-2.6, 1.4, 0] }, { id: 'fe2', element: 'Fe', position: [-2.6, -1.4, 0] },
+          { id: 'o1', element: 'O', position: [1.1, 1.1, 0] }, { id: 'o2', element: 'O', position: [2.2, 0, 0] }, { id: 'o3', element: 'O', position: [1.1, -1.1, 0] },
+          { id: 'al1', element: 'Al', position: [1.5, 0.6, 0] }, { id: 'al2', element: 'Al', position: [1.5, -0.6, 0] }],
+        bonds: [ { start: 'al1', end: 'o1', type: 'ionic' }, { start: 'al1', end: 'o2', type: 'ionic' },
+          { start: 'al2', end: 'o2', type: 'ionic' }, { start: 'al2', end: 'o3', type: 'ionic' }] }
+    ]
+  },
+
   // ============ NUCLEAR REACTIONS ============
   {
     id: 'fission',
@@ -922,6 +1098,7 @@ export const MOLECULES = {
 export const REACTION_CATEGORIES = {
   inorganic: 'Inorganic',
   organic: 'Organic',
+  aromatic: 'Aromatic',
   nuclear: 'Nuclear',
   advanced: 'Advanced'
 };

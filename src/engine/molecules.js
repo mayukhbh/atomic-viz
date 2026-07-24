@@ -235,7 +235,8 @@ function methylamine() {
 }
 
 // ---------- aromatics ----------
-function benzeneRing(withSubstituent = null) {
+function benzeneRing(substituted = []) {
+  const sub = new Set(substituted);
   const m = mol();
   const R = L.CCar;
   const carbons = [];
@@ -248,40 +249,145 @@ function benzeneRing(withSubstituent = null) {
     m.bond(carbons[i], carbons[(i + 1) % 6], i % 2 === 0 ? 2 : 1, 'aromatic');
   }
   for (let i = 0; i < 6; i++) {
-    if (withSubstituent && i === 0) continue;
+    if (sub.has(i)) continue;
     const p = m.atoms[carbons[i]].pos;
     const outward = v.norm(p);
-    const hp = v.add(p, v.scale(outward, L.CH));
-    m.bond(carbons[i], m.add('H', hp), 1);
+    m.bond(carbons[i], m.add('H', v.add(p, v.scale(outward, L.CH))), 1);
   }
   return { m, carbons, R };
 }
+
+// outward direction and position of a ring carbon (helper for substituents)
+const ringSite = (m, carbons, i) => {
+  const p = m.atoms[carbons[i]].pos;
+  return { p, outward: v.norm(p) };
+};
 
 function benzene() {
   return benzeneRing().m;
 }
 
 function phenol() {
-  const { m, carbons } = benzeneRing(true);
-  const p0 = m.atoms[carbons[0]].pos;
-  const outward = v.norm(p0);
-  const oPos = v.add(p0, v.scale(outward, L.CO));
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const oPos = v.add(p, v.scale(outward, L.CO));
   const o = m.add('O', oPos, { fg: 'OH' });
   m.bond(carbons[0], o, 1);
   const hDir = v.norm(v.add(outward, [0, 0.6, 0]));
-  const h = m.add('H', v.add(oPos, v.scale(hDir, L.OH)), { fg: 'OH' });
-  m.bond(o, h, 1, 'polar');
+  m.bond(o, m.add('H', v.add(oPos, v.scale(hDir, L.OH)), { fg: 'OH' }), 1, 'polar');
   return m;
 }
 
 function toluene() {
-  const { m, carbons } = benzeneRing(true);
-  const p0 = m.atoms[carbons[0]].pos;
-  const outward = v.norm(p0);
-  const cPos = v.add(p0, v.scale(outward, L.CC));
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const cPos = v.add(p, v.scale(outward, L.CC));
   const c = m.add('C', cPos, { fg: 'CH3' });
   m.bond(carbons[0], c, 1);
   m.methyl(c, cPos, outward);
+  return m;
+}
+
+function xylene() {
+  // para-xylene: methyls on opposite carbons (0 and 3)
+  const { m, carbons } = benzeneRing([0, 3]);
+  [0, 3].forEach((idx) => {
+    const { p, outward } = ringSite(m, carbons, idx);
+    const cPos = v.add(p, v.scale(outward, L.CC));
+    const c = m.add('C', cPos, { fg: 'CH3' });
+    m.bond(carbons[idx], c, 1);
+    m.methyl(c, cPos, outward);
+  });
+  return m;
+}
+
+function aniline() {
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const nPos = v.add(p, v.scale(outward, L.CN));
+  const n = m.add('N', nPos, { fg: 'NH2' });
+  m.bond(carbons[0], n, 1);
+  tetrahedralPair(nPos, v.scale(outward, -1), [0, 0, 1], L.NH).forEach((hp) => {
+    m.bond(n, m.add('H', hp, { fg: 'NH2' }), 1, 'polar');
+  });
+  return m;
+}
+
+function chlorobenzene() {
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const cl = m.add('Cl', v.add(p, v.scale(outward, L.CCl)), { fg: 'Cl' });
+  m.bond(carbons[0], cl, 1, 'polar');
+  return m;
+}
+
+function nitrobenzene() {
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const nPos = v.add(p, v.scale(outward, L.CN));
+  const n = m.add('N', nPos, { fg: 'NO2' });
+  m.bond(carbons[0], n, 1);
+  // two N–O bonds splayed ±60° from outward (nitro resonance shown as one double, one single)
+  const side = v.norm(v.cross(outward, [0, 0, 1]));
+  const o1 = v.add(nPos, v.scale(v.norm(v.add(outward, side)), L.COd));
+  const o2 = v.add(nPos, v.scale(v.norm(v.sub(outward, side)), L.CO));
+  m.bond(n, m.add('O', o1, { fg: 'NO2' }), 2);
+  m.bond(n, m.add('O', o2, { fg: 'NO2' }), 1);
+  return m;
+}
+
+function benzoicAcid() {
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const cPos = v.add(p, v.scale(outward, L.CC));
+  const c = m.add('C', cPos, { fg: 'COOH' });
+  m.bond(carbons[0], c, 1);
+  const side = v.norm(v.cross(outward, [0, 0, 1]));
+  const oDouble = v.add(cPos, v.scale(v.norm(v.add(outward, side)), L.COd));
+  const oSingle = v.add(cPos, v.scale(v.norm(v.sub(outward, side)), L.CO));
+  m.bond(c, m.add('O', oDouble, { fg: 'COOH' }), 2);
+  const oS = m.add('O', oSingle, { fg: 'COOH' });
+  m.bond(c, oS, 1);
+  m.bond(oS, m.add('H', v.add(oSingle, v.scale(v.norm(v.sub(oSingle, cPos)), L.OH)), { fg: 'COOH' }), 1, 'polar');
+  return m;
+}
+
+function styrene() {
+  const { m, carbons } = benzeneRing([0]);
+  const { p, outward } = ringSite(m, carbons, 0);
+  const c1Pos = v.add(p, v.scale(outward, L.CC));
+  const c1 = m.add('C', c1Pos, { fg: 'C=C' });
+  m.bond(carbons[0], c1, 1);
+  const side = v.norm(v.cross(outward, [0, 0, 1]));
+  const c2Pos = v.add(c1Pos, v.scale(v.norm(v.add(outward, side)), L.CCd));
+  const c2 = m.add('C', c2Pos, { fg: 'C=C' });
+  m.bond(c1, c2, 2);
+  // vinyl hydrogens
+  m.bond(c1, m.add('H', v.add(c1Pos, v.scale(v.norm(v.sub(side, outward)), L.CH))), 1);
+  m.bond(c2, m.add('H', v.add(c2Pos, v.scale(v.norm(v.add(v.scale(outward, 0.3), side)), L.CH))), 1);
+  m.bond(c2, m.add('H', v.add(c2Pos, v.scale(v.norm(v.sub(outward, v.scale(side, 0.2))), L.CH))), 1);
+  return m;
+}
+
+function naphthalene() {
+  const m = mol();
+  // two fused aromatic rings sharing the central vertical edge
+  const pts = {
+    Ct: [0, 0.7, 0], Cb: [0, -0.7, 0],
+    A1: [-1.212, 1.4, 0], A2: [-2.424, 0.7, 0], A3: [-2.424, -0.7, 0], A4: [-1.212, -1.4, 0],
+    B1: [1.212, 1.4, 0], B2: [2.424, 0.7, 0], B3: [2.424, -0.7, 0], B4: [1.212, -1.4, 0],
+  };
+  const id = {};
+  Object.entries(pts).forEach(([k, p]) => { id[k] = m.add('C', p, { ring: true }); });
+  const B = (a, b, o) => m.bond(id[a], id[b], o, 'aromatic');
+  B('Ct', 'A1', 2); B('A1', 'A2', 1); B('A2', 'A3', 2); B('A3', 'A4', 1); B('A4', 'Cb', 2);
+  B('Ct', 'Cb', 1); B('Ct', 'B1', 1); B('B1', 'B2', 2); B('B2', 'B3', 1); B('B3', 'B4', 2); B('B4', 'Cb', 1);
+  // hydrogens on every peripheral carbon (all except the two shared fusion carbons)
+  ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4'].forEach((k) => {
+    const p = pts[k];
+    const outward = v.norm(p);
+    m.bond(id[k], m.add('H', v.add(p, v.scale(outward, L.CH))), 1);
+  });
   return m;
 }
 
@@ -323,8 +429,15 @@ const RAW = {
   // amines & aromatics
   methylamine: { build: methylamine, name: 'Methylamine', formula: 'CH₃NH₂', category: 'organic', class: 'Amine', blurb: 'Simplest primary amine; basic –NH₂ group.' },
   benzene: { build: benzene, name: 'Benzene', formula: 'C₆H₆', category: 'organic', class: 'Aromatic', blurb: 'The aromatic ring — delocalised electrons above and below the plane.' },
-  phenol: { build: phenol, name: 'Phenol', formula: 'C₆H₅OH', category: 'organic', class: 'Aromatic', blurb: 'A hydroxyl bonded directly to an aromatic ring; weakly acidic.' },
   toluene: { build: toluene, name: 'Toluene', formula: 'C₆H₅CH₃', category: 'organic', class: 'Aromatic', blurb: 'Methylbenzene; a common aromatic solvent.' },
+  xylene: { build: xylene, name: 'p-Xylene', formula: 'C₆H₄(CH₃)₂', category: 'organic', class: 'Aromatic', blurb: 'Two methyl groups para across the ring; a plastics precursor.' },
+  phenol: { build: phenol, name: 'Phenol', formula: 'C₆H₅OH', category: 'organic', class: 'Aromatic', blurb: 'A hydroxyl bonded directly to an aromatic ring; weakly acidic.' },
+  aniline: { build: aniline, name: 'Aniline', formula: 'C₆H₅NH₂', category: 'organic', class: 'Aromatic', blurb: 'An amino group on benzene; the parent of countless dyes.' },
+  nitrobenzene: { build: nitrobenzene, name: 'Nitrobenzene', formula: 'C₆H₅NO₂', category: 'organic', class: 'Aromatic', blurb: 'A nitro group on the ring; the product of benzene nitration.' },
+  chlorobenzene: { build: chlorobenzene, name: 'Chlorobenzene', formula: 'C₆H₅Cl', category: 'organic', class: 'Aromatic', blurb: 'A halogen bonded to the aromatic ring.' },
+  benzoicAcid: { build: benzoicAcid, name: 'Benzoic Acid', formula: 'C₆H₅COOH', category: 'organic', class: 'Aromatic', blurb: 'A carboxylic acid on benzene; a common food preservative.' },
+  styrene: { build: styrene, name: 'Styrene', formula: 'C₆H₅CH=CH₂', category: 'organic', class: 'Aromatic', blurb: 'A vinyl group on benzene; the monomer of polystyrene.' },
+  naphthalene: { build: naphthalene, name: 'Naphthalene', formula: 'C₁₀H₈', category: 'organic', class: 'Aromatic', blurb: 'Two fused aromatic rings — the classic mothball molecule.' },
 };
 
 export const MOLECULE_LIB = Object.fromEntries(

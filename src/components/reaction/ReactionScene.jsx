@@ -12,7 +12,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 function ReactAtom({ atom }) {
   const ref = useRef();
   const el = ELEMENTS[atom.element];
-  const color = el?.color || cpk(atom.element).color;
+  const color = cpk(atom.element).color; // vibrant molecular palette, consistent with the viewer
   const radius = (el?.radius || 0.5) * 0.6;
 
   useFrame(({ clock }) => {
