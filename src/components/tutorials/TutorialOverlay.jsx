@@ -9,14 +9,13 @@ import {
   Play,
   Clock
 } from 'lucide-react';
-import { useSettings } from '../../context/SettingsContext';
-import { TUTORIALS, getTutorialById, getBasicTutorials, getAdvancedTutorials } from '../../data/tutorials';
+import { useSettings } from '../../context/useSettings';
+import { getTutorialById, getBasicTutorials, getAdvancedTutorials } from '../../data/tutorials';
 
 /**
  * Tutorial selection menu
  */
 export const TutorialMenu = ({ onSelect, onClose }) => {
-  const { complexity } = useSettings();
   const basicTutorials = getBasicTutorials();
   const advancedTutorials = getAdvancedTutorials();
 
@@ -127,11 +126,7 @@ const TutorialCard = ({ tutorial, onSelect, advanced = false }) => {
  */
 export const TutorialOverlay = ({
   onClose,
-  onElementChange,
-  onViewChange,
-  onReactionChange,
-  onStageChange,
-  onOrbitalModeChange
+  onApplyStep
 }) => {
   const {
     tutorialActive,
@@ -142,35 +137,12 @@ export const TutorialOverlay = ({
     endTutorial
   } = useSettings();
 
-  if (!tutorialActive || !currentTutorial) return null;
-
   const tutorial = getTutorialById(currentTutorial);
-  if (!tutorial) return null;
-
-  const step = tutorial.steps[tutorialStep];
+  const step = tutorial?.steps[tutorialStep];
+  React.useEffect(() => { if (tutorialActive && step) onApplyStep(step); }, [tutorialActive, step, onApplyStep]);
+  if (!tutorialActive || !step) return null;
   const isFirstStep = tutorialStep === 0;
   const isLastStep = tutorialStep === tutorial.steps.length - 1;
-
-  // Apply step settings
-  React.useEffect(() => {
-    if (step) {
-      if (step.element && onElementChange) {
-        onElementChange(step.element);
-      }
-      if (step.view && onViewChange) {
-        onViewChange(step.view);
-      }
-      if (step.reactionId && onReactionChange) {
-        onReactionChange(step.reactionId);
-      }
-      if (typeof step.stage === 'number' && onStageChange) {
-        onStageChange(step.stage);
-      }
-      if (step.orbitalMode && onOrbitalModeChange) {
-        onOrbitalModeChange(step.orbitalMode);
-      }
-    }
-  }, [step, tutorialStep]);
 
   const handleNext = () => {
     if (isLastStep) {

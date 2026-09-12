@@ -903,21 +903,6 @@ export const REACTIONS = [
   }
 ];
 
-export const MOLECULES = {
-  'H2O': { name: 'Water', formula: 'H₂O', atoms: { H: 2, O: 1 } },
-  'CH4': { name: 'Methane', formula: 'CH₄', atoms: { C: 1, H: 4 } },
-  'CO2': { name: 'Carbon Dioxide', formula: 'CO₂', atoms: { C: 1, O: 2 } },
-  'NH3': { name: 'Ammonia', formula: 'NH₃', atoms: { N: 1, H: 3 } },
-  'O2': { name: 'Oxygen Gas', formula: 'O₂', atoms: { O: 2 } },
-  'H2': { name: 'Hydrogen Gas', formula: 'H₂', atoms: { H: 2 } },
-  'NaCl': { name: 'Table Salt', formula: 'NaCl', atoms: { Na: 1, Cl: 1 } },
-  'H2SO4': { name: 'Sulfuric Acid', formula: 'H₂SO₄', atoms: { H: 2, S: 1, O: 4 } },
-  'C2H5OH': { name: 'Ethanol', formula: 'C₂H₅OH', atoms: { C: 2, H: 6, O: 1 } },
-  'C6H12O6': { name: 'Glucose', formula: 'C₆H₁₂O₆', atoms: { C: 6, H: 12, O: 6 } },
-  'Fe2O3': { name: 'Iron(III) Oxide', formula: 'Fe₂O₃', atoms: { Fe: 2, O: 3 } },
-  'ATP': { name: 'Adenosine Triphosphate', formula: 'ATP', atoms: { C: 10, H: 16, N: 5, O: 13, P: 3 } }
-};
-
 // Reaction categories for filtering
 export const REACTION_CATEGORIES = {
   inorganic: 'Inorganic',

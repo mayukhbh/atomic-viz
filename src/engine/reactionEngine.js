@@ -41,8 +41,10 @@ export function interpolateReaction(reaction, p) {
 
   // atoms — assume stable ids across stages, fall back gracefully
   const toById = new Map(to.atoms.map((a) => [a.id, a]));
-  const atoms = from.atoms.map((a) => {
-    const b = toById.get(a.id) || a;
+  const fromIds = new Set(from.atoms.map(a => a.id));
+  const sourceAtoms = [...from.atoms, ...to.atoms.filter(a => !fromIds.has(a.id)).map(a => ({ ...a, hidden: true }))];
+  const atoms = sourceAtoms.map((a) => {
+    const b = toById.get(a.id) || { ...a, hidden: true };
     const fromHidden = a.hidden ? 0 : 1;
     const toHidden = b.hidden ? 0 : 1;
     const vis = lerp(fromHidden, toHidden, t);
@@ -74,18 +76,19 @@ export function interpolateReaction(reaction, p) {
 // Discrete stage index closest to progress (for labels / dots).
 export function stageIndexAt(reaction, p) {
   const n = reaction.stages?.length || 1;
-  return Math.min(n - 1, Math.round(p * (n - 1)));
+  return Math.max(0, Math.min(n - 1, Math.round(p * (n - 1))));
 }
 
 // ---- Energy profile (reaction coordinate diagram) ----
 // Synthesises a physically-shaped curve: reactant plateau → activation barrier →
 // product plateau. Heights are normalised for display; the sign of ΔH is honoured.
 export function energyProfile(reaction, samples = 120) {
+  if (!Number.isInteger(samples) || samples < 1) throw new RangeError('Energy profile requires a positive sample count');
   const dH = reaction.enthalpy ?? 0;
   const exothermic = dH < 0;
 
   // normalise product level to [-1, 1]-ish band relative to reactants at 0
-  const norm = Math.tanh((Math.abs(dH) || 1) / 400); // 0..1
+  const norm = Math.tanh(Math.abs(dH) / 400); // 0..1
   const productLevel = exothermic ? -norm : norm;
 
   // activation barrier: user-supplied or a plausible default above the higher plateau

@@ -1,8 +1,9 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { Label3D } from './Label3D';
+import { validateMolecule } from '../../engine/validation';
 import { cpk, BOND_COLORS } from '../../engine/cpk';
 
 // Reusable, chemistry-accurate molecule renderer.
@@ -20,7 +21,7 @@ function AtomMesh({ element, position, radius, mode, dim, highlight }) {
     if (ref.current && highlight) {
       const p = 1 + Math.sin(clock.elapsedTime * 3) * 0.04;
       ref.current.scale.setScalar(p);
-    }
+    } else if (ref.current) { ref.current.scale.setScalar(1); }
   });
 
   return (
@@ -117,6 +118,7 @@ export function MoleculeView({
   scale = 1,
 }) {
   const group = useRef();
+  useMemo(() => { if (molecule) validateMolecule(molecule); }, [molecule]);
 
   useFrame((_, delta) => {
     if (group.current && autoRotate) {
@@ -139,12 +141,12 @@ export function MoleculeView({
     return normal;
   }, [molecule]);
 
-  const radiusFor = (el) => {
+  const radiusFor = useCallback((el) => {
     const d = cpk(el);
     if (mode === 'spacefill') return d.vdw * 0.62;
     if (mode === 'wireframe') return d.covalent * 0.18;
     return d.covalent * 0.42; // ball-and-stick
-  };
+  }, [mode]);
 
   // Auto-fit: normalise every molecule to a consistent on-screen size regardless of how
   // many atoms it has, so switching from methane to benzene doesn't blow past the frame.
@@ -157,7 +159,7 @@ export function MoleculeView({
     });
     const target = 1.9;
     return Math.min(1.7, target / maxR);
-  }, [molecule, mode]);
+  }, [molecule, radiusFor]);
 
   if (!molecule) return null;
 

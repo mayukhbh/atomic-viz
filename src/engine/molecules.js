@@ -1,6 +1,6 @@
 // Curated 3D molecule library. Geometry is grown from the primitives in builders.js
-// (correct sp3/sp2 vertices, standard bond lengths) so structures are chemically faithful,
-// not eyeballed. Every molecule carries metadata used by the viewer and the organic section.
+// (ideal sp3/sp2 primitives and approximate bond lengths). These are educational
+// conformers, not energy-minimized simulations. Every molecule carries metadata used by the viewer and the organic section.
 
 import {
   v, BOND_LENGTH as L, buildAlkane, centerMolecule,
@@ -24,7 +24,7 @@ function mol() {
     },
     // add 3 hydrogens (methyl cap) around carbon `ci` at `pos`, pointing away from `awayDir`
     methyl(ci, pos, awayDir, phase = 0) {
-      tetrahedralTripod(pos, v.norm(awayDir), L.CH, phase).forEach((hp) => {
+      tetrahedralTripod(pos, v.scale(v.norm(awayDir), -1), L.CH, phase).forEach((hp) => {
         const h = api.add('H', hp);
         api.bond(ci, h, 1);
       });

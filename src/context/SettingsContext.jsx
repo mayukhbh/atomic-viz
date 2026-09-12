@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
-const SettingsContext = createContext(null);
+import { SettingsContext } from './useSettings';
+const speedPresets = [0.25, 0.5, 1, 2, 4];
 
 export const SettingsProvider = ({ children }) => {
   // Complexity toggle: 'basic' for high school, 'advanced' for university
@@ -28,7 +29,7 @@ export const SettingsProvider = ({ children }) => {
   }, []);
 
   // Speed presets
-  const speedPresets = [0.25, 0.5, 1.0, 2.0, 4.0];
+
 
   // Cycle through speed presets
   const cycleSpeed = useCallback(() => {
@@ -96,12 +97,3 @@ export const SettingsProvider = ({ children }) => {
   );
 };
 
-export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error('useSettings must be used within a SettingsProvider');
-  }
-  return context;
-};
-
-export default SettingsContext;

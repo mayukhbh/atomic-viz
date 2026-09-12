@@ -8,7 +8,6 @@ import {
   generateFOrbital,
   getOrbitalRadius,
   getOrbitalColor,
-  getMaxElectrons
 } from '../../utils/orbitalGeometry';
 
 /**
@@ -100,7 +99,6 @@ const SOrbital = ({ radius = 1, color = '#3B82F6', opacity = 0.3, electrons = 2 
  */
 const POrbital = ({ radius = 1, color = '#22C55E', opacity = 0.35, electrons = 6 }) => {
   const axes = ['x', 'y', 'z'];
-  const electronsPerOrbital = Math.ceil(electrons / 3);
 
   return (
     <group>
