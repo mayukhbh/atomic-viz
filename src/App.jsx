@@ -13,6 +13,8 @@ const ReactionLab = lazy(() => import('./features/reaction-lab/ReactionLab').the
 import { SettingsProvider } from './context/SettingsContext';
 import { useSettings } from './context/useSettings';
 import { AtomInfo } from './features/atom-explorer/AtomInfo';
+import { ExperienceBoundary } from './components/common/ExperienceBoundary';
+import { SceneExportProvider } from './features/export/SceneExportProvider';
 import { AnimatePresence } from 'framer-motion';
 import {
   Atom as AtomIcon,
@@ -56,9 +58,10 @@ function AppContent() {
   }, [setOrbitalMode]);
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#04060a' }}>
+    <div style={{ position: 'relative', width: '100vw', height: '100dvh', overflow: 'hidden', background: '#04060a' }}>
       {/* 3D Scene Layer */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      <ExperienceBoundary key={viewMode}><Suspense fallback={<div role="status" className="p-8 text-cyan-200">Loading view…</div>}>
         {viewMode === 'builder' ? (
           <AtomBuilder />
         ) : viewMode === 'sandbox' ? (
@@ -72,15 +75,17 @@ function AppContent() {
             <Atom element={activeElement} showElectrons scale={1.5} orbitalMode={orbitalMode} />
           </Scene>
         )}
+      </Suspense></ExperienceBoundary>
       </div>
 
+<p className="sr-only">Interactive chemistry illustration. Drag to rotate and scroll to zoom. Use the controls for element and reaction details. Orbital shapes and animations are educational approximations.</p>
       {/* UI Overlay Layer */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 100, pointerEvents: 'none' }}>
-        <nav className="p-6 flex justify-between items-center pointer-events-auto">
-          <div className="flex items-center gap-2 text-white cursor-pointer" onClick={() => setViewMode('atom')}>
+        <nav aria-label="Main navigation" className="app-nav p-6 flex justify-between items-center pointer-events-auto">
+          <button aria-label="AtomicViz home" className="flex items-center gap-2 text-white cursor-pointer" onClick={() => setViewMode('atom')}>
             <AtomIcon className="w-8 h-8 text-cyan-400" />
             <h1 className="text-2xl font-bold tracking-wider">ATOMIC<span className="text-cyan-400">VIZ</span></h1>
-          </div>
+          </button>
 
           <div className="flex gap-1 bg-white/5 backdrop-blur-md p-1 rounded-full border border-white/10">
             <NavButton active={viewMode === 'atom'} onClick={() => setViewMode('atom')} icon={AtomIcon} label="Atom" />
@@ -151,38 +156,39 @@ function AppContent() {
         )}
 
 
-        <AnimatePresence>
+        <Suspense fallback={null}><AnimatePresence>
           {showExportPanel && <ExportPanel onClose={() => setShowExportPanel(false)} />}
-        </AnimatePresence>
+        </AnimatePresence></Suspense>
       </div>
 
       {/* Overlays outside pointer-events wrapper */}
-      <AnimatePresence>
+      <Suspense fallback={null}><AnimatePresence>
         {showTutorialMenu && (
           <TutorialMenu
             onSelect={(tutorialId) => { startTutorial(tutorialId); setShowTutorialMenu(false); }}
             onClose={() => setShowTutorialMenu(false)}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence></Suspense>
 
-      <AnimatePresence>
+      <Suspense fallback={null}><AnimatePresence>
         {tutorialActive && (
           <TutorialOverlay
             onClose={() => setShowTutorialMenu(false)}
             onApplyStep={applyTutorialStep}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence></Suspense>
 
-      <AnimatePresence>
+      <Suspense fallback={null}><AnimatePresence>
         {showPeriodicTable && (
           <PeriodicTable
             onSelect={(el) => { setActiveElement(el); setShowPeriodicTable(false); }}
+            onClose={() => setShowPeriodicTable(false)}
             activeElement={activeElement}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence></Suspense>
     </div>
   );
 }
@@ -192,6 +198,7 @@ function NavButton({ active, onClick, icon: Icon, label, accent = 'cyan' }) {
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${active ? activeBg : 'text-white hover:bg-white/10'}`}
     >
       <Icon size={15} /> {label}
@@ -202,9 +209,9 @@ function NavButton({ active, onClick, icon: Icon, label, accent = 'cyan' }) {
 
 function App() {
   return (
-    <SettingsProvider>
+    <SettingsProvider><SceneExportProvider><ExperienceBoundary>
       <Suspense fallback={<div role="status" className="p-8 text-cyan-200">Loading AtomicViz…</div>}><AppContent /></Suspense>
-    </SettingsProvider>
+    </ExperienceBoundary></SceneExportProvider></SettingsProvider>
   );
 }
 

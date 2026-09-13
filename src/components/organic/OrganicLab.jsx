@@ -180,6 +180,7 @@ export function OrganicLab() {
 function Toggle({ icon: Icon, label, on, onClick }) {
   return (
     <button
+      aria-pressed={on}
       onClick={onClick}
       className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all ${
         on ? 'bg-white/15 text-white' : 'text-white/50 hover:bg-white/10'

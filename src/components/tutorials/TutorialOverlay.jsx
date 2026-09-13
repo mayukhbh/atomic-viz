@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDialog } from '../common/useDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -16,6 +17,7 @@ import { getTutorialById, getBasicTutorials, getAdvancedTutorials } from '../../
  * Tutorial selection menu
  */
 export const TutorialMenu = ({ onSelect, onClose }) => {
+  const dialog = useDialog(onClose);
   const basicTutorials = getBasicTutorials();
   const advancedTutorials = getAdvancedTutorials();
 
@@ -27,7 +29,7 @@ export const TutorialMenu = ({ onSelect, onClose }) => {
       className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
+      <motion.div ref={dialog} role="dialog" aria-modal="true" aria-label="Guided tutorials" tabIndex={-1}
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
@@ -40,6 +42,7 @@ export const TutorialMenu = ({ onSelect, onClose }) => {
             <h2 className="text-2xl font-bold text-white">Guided Tutorials</h2>
           </div>
           <button
+            aria-label="Close tutorials"
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >
@@ -140,6 +143,12 @@ export const TutorialOverlay = ({
   const tutorial = getTutorialById(currentTutorial);
   const step = tutorial?.steps[tutorialStep];
   React.useEffect(() => { if (tutorialActive && step) onApplyStep(step); }, [tutorialActive, step, onApplyStep]);
+  React.useEffect(() => {
+    if (!tutorialActive) return;
+    const escape = e => { if (e.key === 'Escape' && !e.defaultPrevented) endTutorial(); };
+    document.addEventListener('keydown', escape);
+    return () => document.removeEventListener('keydown', escape);
+  }, [tutorialActive, endTutorial]);
   if (!tutorialActive || !step) return null;
   const isFirstStep = tutorialStep === 0;
   const isLastStep = tutorialStep === tutorial.steps.length - 1;
@@ -183,6 +192,7 @@ export const TutorialOverlay = ({
               </span>
             </div>
             <button
+              aria-label="Exit tutorial"
               onClick={handleClose}
               className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
             >
@@ -191,7 +201,7 @@ export const TutorialOverlay = ({
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-6" aria-live="polite">
             <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
             <p className="text-white/80 leading-relaxed">{step.narration}</p>
           </div>

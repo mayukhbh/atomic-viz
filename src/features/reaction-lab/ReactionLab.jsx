@@ -14,6 +14,7 @@ const SpeedControl = ({ playbackSpeed, setPlaybackSpeed, speedPresets }) => (
       {speedPresets.map((speed) => (
         <button
           key={speed}
+          aria-pressed={playbackSpeed === speed}
           onClick={() => setPlaybackSpeed(speed)}
           className={`px-2 py-1 text-xs rounded transition-all ${
             playbackSpeed === speed
@@ -31,6 +32,7 @@ const SpeedControl = ({ playbackSpeed, setPlaybackSpeed, speedPresets }) => (
 function DomainChip({ label, active, onClick }) {
   return (
     <button
+      aria-pressed={active}
       onClick={onClick}
       className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all ${
         active ? 'bg-cyan-500 text-black border-transparent' : 'text-white/60 border-white/10 hover:bg-white/10'
@@ -102,7 +104,7 @@ export function ReactionLab({ request }) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute bottom-6 left-6 p-5 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl text-white w-[380px] pointer-events-auto shadow-2xl"
+            className="reaction-panel absolute bottom-6 left-6 p-5 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl text-white w-[380px] pointer-events-auto shadow-2xl"
           >
             <div className="flex justify-between items-start mb-3">
               <div>
@@ -144,6 +146,7 @@ export function ReactionLab({ request }) {
 
             {/* Scrubber */}
             <input
+              aria-label="Reaction progress"
               type="range"
               min="0"
               max="1"
@@ -172,6 +175,7 @@ export function ReactionLab({ request }) {
                 {activeReaction.stages.map((_, i) => (
                   <button
                     key={i}
+                    aria-label={`Go to stage ${i+1}`}
                     onClick={() => { setIsPlaying(false); setProgress(numStages === 1 ? 0 : i / (numStages - 1)); }}
                     className={`w-2 h-2 rounded-full transition-all ${i === currentStage ? 'bg-cyan-400 scale-125' : 'bg-white/10 hover:bg-white/30'}`}
                   />
@@ -183,7 +187,7 @@ export function ReactionLab({ request }) {
 
         {/* Reaction picker (right side) */}
         {viewMode === 'reaction' && (
-          <div className="absolute top-28 right-6 w-64 pointer-events-auto z-10">
+          <div className="reaction-library absolute top-28 right-6 w-64 pointer-events-auto z-10">
             <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto">
               <span className="text-xs uppercase tracking-wider text-white/40">Reaction library</span>
               <div className="flex flex-wrap gap-1.5 my-3">

@@ -2,7 +2,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { bondMovedAtom, recognizeMolecules, readDiscoveries, saveDiscoveries, SANDBOX_ELEMENTS } from '../engine/sandbox';
 import { MOLECULE_LIB } from '../engine/molecules';
-import { Canvas } from '@react-three/fiber';
+import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Line, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { Label3D as Text } from './viewer/Label3D';

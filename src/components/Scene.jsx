@@ -1,5 +1,5 @@
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
+import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Stars, AdaptiveDpr } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { StudioEnvironment } from './viewer/StudioEnvironment';

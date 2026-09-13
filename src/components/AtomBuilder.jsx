@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Sphere, Float, Stars } from '@react-three/drei';
 import { elementByAtomicNumber, chargeFor, stabilityHint } from '../engine/atomBuilder';
 import { Atom } from './Atom';
