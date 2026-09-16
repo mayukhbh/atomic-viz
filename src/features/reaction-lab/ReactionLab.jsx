@@ -43,13 +43,16 @@ function DomainChip({ label, active, onClick }) {
   );
 }
 
-export function ReactionLab({ request }) {
+export function ReactionLab({ request, session, onSaveSession }) {
  const {complexity, playbackSpeed, setPlaybackSpeed, speedPresets} = useSettings();
  const viewMode = 'reaction';
-  const [activeReactionId, setActiveReactionId] = useState(request?.reactionId || 'water-formation');
-  const [reactionDomain, setReactionDomain] = useState('all');
-  const [progress, setProgress] = useState(() => { const r = REACTIONS.find(r => r.id === request?.reactionId); return Math.min(1, (request?.stage || 0) / Math.max(1, (r?.stages.length || 1) - 1)); });
+  const [activeReactionId, setActiveReactionId] = useState(() => session && session.requestKey === request?.key ? session.activeReactionId : request?.reactionId || 'water-formation');
+  const [reactionDomain, setReactionDomain] = useState(() => session?.reactionDomain || 'all');
+  const [progress, setProgress] = useState(() => { if (session && session.requestKey === request?.key) return session.progress; const r = REACTIONS.find(r => r.id === request?.reactionId); return Math.min(1, (request?.stage || 0) / Math.max(1, (r?.stages.length || 1) - 1)); });
   const [isPlaying, setIsPlaying] = useState(false);
+  const snapshotRef = useRef(null);
+  useEffect(() => { snapshotRef.current = { requestKey: request?.key, activeReactionId, reactionDomain, progress }; }, [request?.key, activeReactionId, reactionDomain, progress]);
+  useEffect(() => () => { if (snapshotRef.current) onSaveSession?.(snapshotRef.current); }, [onSaveSession]);
   const activeReaction = REACTIONS.find((r) => r.id === activeReactionId);
 
   const filteredReactions = useMemo(

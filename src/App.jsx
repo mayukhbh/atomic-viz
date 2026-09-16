@@ -43,6 +43,7 @@ function AppContent() {
   const [viewMode, setViewMode] = useState('atom'); // atom | reaction | organic | builder | sandbox
   const [activeElement, setActiveElement] = useState('C');
   const [reactionRequest, setReactionRequest] = useState(null);
+  const [reactionSession, setReactionSession] = useState(null);
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
   const [showExportPanel, setShowExportPanel] = useState(false);
   const [showTutorialMenu, setShowTutorialMenu] = useState(false);
@@ -69,7 +70,7 @@ function AppContent() {
         ) : viewMode === 'organic' ? (
           <OrganicLab />
         ) : viewMode === 'reaction' ? (
-          <ReactionLab key={reactionRequest?.key} request={reactionRequest} />
+          <ReactionLab key={reactionRequest?.key} request={reactionRequest} session={reactionSession} onSaveSession={setReactionSession} />
         ) : (
           <Scene>
             <Atom element={activeElement} showElectrons scale={1.5} orbitalMode={orbitalMode} />

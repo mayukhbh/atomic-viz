@@ -1,18 +1,20 @@
 import React, { useMemo } from 'react';
 import { energyProfile } from '../../engine/reactionEngine';
 
-// Reaction-coordinate energy diagram. Renders the reactant → transition-state → product
-// curve and a live marker that rides the curve as the reaction plays.
-export function EnergyDiagram({ reaction, progress }) {
   const W = 300;
   const H = 150;
   const pad = { l: 34, r: 14, t: 16, b: 26 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
 
+
+// Reaction-coordinate energy diagram. Renders the reactant → transition-state → product
+// curve and a live marker that rides the curve as the reaction plays.
+export function EnergyDiagram({ reaction, progress }) {
   const profile = useMemo(() => energyProfile(reaction, 140), [reaction]);
   const { points, exothermic, barrier, productLevel } = profile;
 
+  const { yToPx, xToPx, path } = useMemo(() => {
   // domain of y across all points (with headroom)
   const ys = points.map((p) => p.y);
   const minY = Math.min(...ys, -0.1);
@@ -23,6 +25,9 @@ export function EnergyDiagram({ reaction, progress }) {
   const path = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${xToPx(p.x).toFixed(1)} ${yToPx(p.y).toFixed(1)}`)
     .join(' ');
+
+    return { yToPx, xToPx, path };
+  }, [points]);
 
   // marker position along curve
   const clamped = Math.max(0, Math.min(1, progress));
@@ -38,7 +43,7 @@ export function EnergyDiagram({ reaction, progress }) {
 
   return (
     <div className="w-full">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
+      <svg role="img" aria-label="Illustrative reaction energy profile" viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
         <defs>
           <linearGradient id="ediag-fill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
