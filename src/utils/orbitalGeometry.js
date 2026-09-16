@@ -1,26 +1,3 @@
-import * as THREE from 'three';
-
-/**
- * Generate points for an s orbital (spherical)
- * @param {number} radius - Base radius
- * @param {number} segments - Number of segments for detail
- * @returns {Array} Array of Vector3 points
- */
-export const generateSOrbital = (radius = 1, segments = 32) => {
-  const points = [];
-  for (let i = 0; i <= segments; i++) {
-    for (let j = 0; j <= segments; j++) {
-      const phi = (i / segments) * Math.PI * 2;
-      const theta = (j / segments) * Math.PI;
-      const x = radius * Math.sin(theta) * Math.cos(phi);
-      const y = radius * Math.sin(theta) * Math.sin(phi);
-      const z = radius * Math.cos(theta);
-      points.push(new THREE.Vector3(x, y, z));
-    }
-  }
-  return points;
-};
-
 /**
  * Generate vertices for a p orbital (dumbbell shape)
  * @param {string} axis - 'x', 'y', or 'z' for orientation
@@ -134,7 +111,7 @@ export const generateFOrbital = (type = 'xyz', radius = 0.35) => {
 
   // f orbitals have 8 lobes in various configurations
   switch (type) {
-    case 'xyz':
+    case 'xyz': {
       // 8 lobes at corners of a cube
       const corners = [
         [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
@@ -148,6 +125,7 @@ export const generateFOrbital = (type = 'xyz', radius = 0.35) => {
         });
       });
       break;
+    }
     case 'z3':
       // More complex z-dominant shape
       lobes.push(
@@ -222,7 +200,7 @@ export const parseElectronConfiguration = (config) => {
  * @returns {number} Radial distance
  */
 export const getOrbitalRadius = (n, baseRadius = 1) => {
-  // Approximate Bohr radius scaling: r ∝ n²
+  // Linear display spacing, not a physical orbital radius.
   return baseRadius * (0.5 + n * 0.4);
 };
 

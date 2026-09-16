@@ -1,49 +1,43 @@
 
 import React, { useState, useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Sphere, Float, Line, Stars } from '@react-three/drei';
+import { bondMovedAtom, recognizeMolecules, readDiscoveries, saveDiscoveries, SANDBOX_ELEMENTS } from '../engine/sandbox';
+import { MOLECULE_LIB } from '../engine/molecules';
+import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
+import { OrbitControls, Line, Stars } from '@react-three/drei';
 import * as THREE from 'three';
-import { ELEMENTS } from '../data/elements';
 import { Label3D as Text } from './viewer/Label3D';
-import { MOLECULES } from '../data/reactions';
 
 // Simple UUID generator to avoid dependencies
-const uuid = () => Math.random().toString(36).substr(2, 9);
+const uuid = () => crypto.randomUUID();
 // Dragging uses R3F pointer events (onPointerDown/Move/Up) raycast onto a virtual plane —
 // no extra gesture library required.
 
-const DraggableAtom = ({ id, element, position, onDrag, onDragEnd }) => {
+const DraggableAtom = ({ id, element, position, onDrag, onDragEnd, onDraggingChange }) => {
     const [isDragging, setIsDragging] = useState(false);
     const ref = useRef();
-    const { camera, raycaster, size, viewport } = useThree();
 
     // Plane for raycasting (z=0)
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0,0,1),0), []);
+    const point = useMemo(() => new THREE.Vector3(), []);
 
     const handlePointerDown = (e) => {
         e.stopPropagation();
         setIsDragging(true);
+        onDraggingChange(true);
         e.target.setPointerCapture(e.pointerId);
     };
 
     const handlePointerUp = (e) => {
         setIsDragging(false);
+        onDraggingChange(false);
         e.target.releasePointerCapture(e.pointerId);
         onDragEnd(id);
     };
 
     const handlePointerMove = (e) => {
         if (isDragging) {
-            // Simple drag on XY plane
-            // We need to project the mouse to the z=0 plane
-            const point = new THREE.Vector3();
-            // e.point is the intersection point on the object, which isn't enough for dragging ON A PLANE
-            // We need to raycast against a virtual plane
-
-            // Standard R3F way:
-            // The event 'e' has 'ray' but we want to intersect with our plane
-            raycaster.ray.intersectPlane(plane, point);
-            onDrag(id, [point.x, point.y, 0]);
+            e.stopPropagation();
+            if(e.ray.intersectPlane(plane,point)) onDrag(id,[point.x,point.y,0]);
         }
     };
 
@@ -57,7 +51,7 @@ const DraggableAtom = ({ id, element, position, onDrag, onDragEnd }) => {
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
                 onPointerMove={handlePointerMove}
-                cursor={isDragging ? 'grabbing' : 'grab'}
+                onPointerCancel={handlePointerUp}
             >
                 <sphereGeometry args={[radius, 32, 32]} />
                 <meshStandardMaterial color={color} roughness={0.2} metalness={0.5} />
@@ -88,21 +82,22 @@ const Bond = ({ start, end }) => {
 };
 
 export const MoleculeSandbox = () => {
+    const [dragging, setDragging] = useState(false);
     const [atoms, setAtoms] = useState([]);
     const [bonds, setBonds] = useState([]);
-    const [discovered, setDiscovered] = useState([]);
+    const [discovered, setDiscovered] = useState(() => {try{return readDiscoveries(localStorage);}catch{return [];}});
     const [notification, setNotification] = useState(null); // Added notification state
 
     // Valency rules
-    const VALENCY = { H: 1, O: 2, N: 3, C: 4 };
+
 
     const addAtom = (symbol) => {
         // Spawn near center with slight jitter to avoid perfect overlap
-        const jitter = 0.5;
+        const angle = atoms.length * 2.399963;
         const newAtom = {
             id: uuid(),
             element: symbol,
-            position: [(Math.random() - 0.5) * jitter, (Math.random() - 0.5) * jitter, 0],
+            position: [Math.cos(angle)*0.25, Math.sin(angle)*0.25, 0],
             bonds: []
         };
         setAtoms(prev => [...prev, newAtom]);
@@ -114,65 +109,12 @@ export const MoleculeSandbox = () => {
         ));
     };
 
-    // ... (checkMolecule remains same)
-
-    const checkBonds = (movedAtomId) => {
-        const movedAtom = atoms.find(a => a.id === movedAtomId);
-        if (!movedAtom) return;
-
-        const BOND_DISTANCE = 1.5; // Slightly increased for better snapping
-        let newBonds = [...bonds];
-        let bondsChanged = false;
-        let atomPositionChanged = false;
-        let finalPosition = [...movedAtom.position];
-
-        // Count current bonds
-        const getBondCount = (atomId, currentBondsList) => {
-            return currentBondsList.filter(b => b.a === atomId || b.b === atomId).length;
-        };
-
-        atoms.forEach(other => {
-            if (other.id === movedAtomId) return;
-
-            const dist = new THREE.Vector3(...finalPosition).distanceTo(new THREE.Vector3(...other.position));
-
-            // Check if bond already exists
-            const bondExists = newBonds.some(b =>
-                (b.a === movedAtomId && b.b === other.id) ||
-                (b.a === other.id && b.b === movedAtomId)
-            );
-
-            if (dist < BOND_DISTANCE && !bondExists) {
-                // Check Valency
-                const bondsA = getBondCount(movedAtomId, newBonds);
-                const bondsB = getBondCount(other.id, newBonds);
-
-                if (bondsA < VALENCY[movedAtom.element] && bondsB < VALENCY[other.element]) {
-                    // Create Bond
-                    newBonds.push({ a: movedAtomId, b: other.id, id: uuid() });
-                    bondsChanged = true;
-
-                    // Snap Logic: Move movedAtom to exact bond distance
-                    // Calculate direction vector from other to movedAtom
-                    const direction = new THREE.Vector3()
-                        .subVectors(new THREE.Vector3(...finalPosition), new THREE.Vector3(...other.position))
-                        .normalize();
-
-                    // New position = other.position + direction * 1.0 (ideal bond length)
-                    const snapPos = new THREE.Vector3(...other.position).add(direction.multiplyScalar(1.0));
-                    finalPosition = [snapPos.x, snapPos.y, snapPos.z];
-                    atomPositionChanged = true;
-                }
-            }
-        });
-
-        if (bondsChanged) {
-            setBonds(newBonds);
-            checkMolecule(newBonds, atoms);
-        }
-
-        if (atomPositionChanged) {
-            updateAtomPosition(movedAtomId, finalPosition);
+    const checkBonds = id => {
+        const next = bondMovedAtom(atoms, bonds, id); setAtoms(next.atoms); setBonds(next.bonds);
+        const added = recognizeMolecules(next.atoms,next.bonds).filter(id=>!discovered.includes(id));
+        if(added.length){const all=[...discovered,...added];setDiscovered(all);let saved=false;
+          try{saved=saveDiscoveries(localStorage,all);}catch{/* Restricted storage retains session state. */}
+          setNotification(`Discovered ${added.map(id=>MOLECULE_LIB[id].name).join(', ')}!${saved?'':' Saved for this session only.'}`);
         }
     };
 
@@ -187,14 +129,15 @@ export const MoleculeSandbox = () => {
     const reset = () => {
         setAtoms([]);
         setBonds([]);
+        setNotification(null);
     };
 
     return (
         <div className="w-full h-full relative bg-black">
             {/* Notification */}
             {notification && (
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] animate-bounce">
-                    <span className="font-bold text-lg">{notification}</span>
+                <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] animate-bounce">
+                    <span role="status" className="font-bold text-lg">{notification}</span>
                 </div>
             )}
 
@@ -205,7 +148,7 @@ export const MoleculeSandbox = () => {
                     Sandbox
                 </h2>
                 <div className="grid grid-cols-3 gap-2 mb-4">
-                    {['H', 'C', 'O', 'N'].map(el => (
+                    {SANDBOX_ELEMENTS.map(el => (
                         <button
                             key={el}
                             onClick={() => addAtom(el)}
@@ -220,6 +163,7 @@ export const MoleculeSandbox = () => {
                 </button>
             </div>
 
+            <div className="absolute bottom-6 right-6 z-10 bg-black/60 p-4 rounded-xl border border-white/10 text-white max-w-xs"><h3>Saved discoveries</h3><p className="text-xs text-white/60">{discovered.length?discovered.map(id=>MOLECULE_LIB[id].formula).join(' · '):'Connect atoms to discover molecules.'}</p><p className="text-xs text-white/50">Connectivity model; bond orders are not simulated.</p></div>
             <Canvas camera={{ position: [0, 0, 10], fov: 45 }}>
                 <color attach="background" args={['#050505']} />
                 <ambientLight intensity={0.5} />
@@ -232,7 +176,7 @@ export const MoleculeSandbox = () => {
                     Let's make OrbitControls only work with right click or something? 
                     Or just keep it simple: if dragging, stop propagation.
                 */}
-                <OrbitControls makeDefault />
+                <OrbitControls makeDefault enabled={!dragging} />
 
                 <group>
                     {atoms.map(atom => (
@@ -241,6 +185,7 @@ export const MoleculeSandbox = () => {
                             {...atom}
                             onDrag={handleDrag}
                             onDragEnd={handleDragEnd}
+                            onDraggingChange={setDragging}
                         />
                     ))}
                 </group>

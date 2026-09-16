@@ -2,6 +2,8 @@ import React from 'react';
 import { ELEMENTS } from '../data/elements';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useDialog } from './common/useDialog';
+import { useSettings } from '../context/useSettings';
 
 export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
     const elementsList = Object.values(ELEMENTS);
@@ -12,18 +14,21 @@ export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
         else onSelect(activeElement);
     };
 
+    const dialog = useDialog(handleClose);
+    const { complexity } = useSettings();
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-8" onClick={handleClose}>
-            <motion.div
+            <motion.div ref={dialog} role="dialog" aria-modal="true" aria-label="Periodic table" tabIndex={-1}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="relative bg-black/80 border border-white/10 rounded-3xl p-8 w-full max-w-7xl shadow-2xl overflow-hidden"
+                className="relative bg-black/80 border border-white/10 rounded-3xl p-4 md:p-8 w-full max-w-7xl shadow-2xl overflow-auto max-h-[90dvh]"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Close button */}
                 <button
                     onClick={handleClose}
+                    aria-label="Close periodic table"
                     className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors z-10"
                 >
                     <X className="w-6 h-6 text-white/60" />
@@ -31,10 +36,12 @@ export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
 
                 <h2 className="text-3xl font-bold mb-8 text-center tracking-[0.2em] text-white/80">PERIODIC TABLE OF ELEMENTS</h2>
 
-                <div className="grid grid-cols-18 gap-2 mb-8" style={{ gridTemplateColumns: 'repeat(18, minmax(0, 1fr))' }}>
+                <div className="grid grid-cols-18 gap-2 mb-8 min-w-[900px]" style={{ gridTemplateColumns: 'repeat(18, minmax(0, 1fr))' }}>
                     {elementsList.map((el) => (
                         <motion.button
                             key={el.symbol}
+                            aria-label={`${el.name}, ${el.symbol}, atomic number ${el.atomicNumber}`}
+                            aria-pressed={activeElement === el.symbol}
                             whileHover={{ scale: 1.1, zIndex: 10, backgroundColor: 'rgba(255,255,255,0.2)' }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => onSelect(el.symbol)}
@@ -68,11 +75,11 @@ export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
                         <p className="text-lg text-gray-300 leading-relaxed">
                             {typeof activeData.description === 'string'
                               ? activeData.description
-                              : activeData.description?.basic || ''}
+                              : activeData.description?.[complexity] || activeData.description?.basic || ''}
                         </p>
                         <div className="mt-4 flex gap-6 text-sm text-white/50 font-mono">
                             <span>Mass: <b className="text-white">{activeData.mass}</b></span>
-                            <span>Radius: <b className="text-white">{activeData.radius} Å</b></span>
+                            <span>Display radius: <b className="text-white">{activeData.radius}</b></span>
                         </div>
                     </div>
 

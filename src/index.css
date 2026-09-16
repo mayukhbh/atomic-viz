@@ -36,3 +36,17 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid #67e8f9; outline-offset: 4px; }
+button:disabled { cursor: not-allowed; }
+@media (max-width: 1150px) {
+ .app-nav { flex-wrap: wrap; justify-content: center; gap: 12px; padding: 12px; }
+ .app-nav > button { display: none; }
+ .reaction-panel { max-height: calc(100dvh - 150px); overflow-y: auto; width: min(360px, 47vw); }
+ .reaction-library { width: min(230px, 31vw); top: 140px; }
+}
+@media (max-width: 700px) {
+ .app-nav { overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; }
+ .app-nav > div { flex-shrink: 0; }
+ .reaction-panel { left: 12px; bottom: 12px; width: 55vw; }
+ .reaction-library { right: 12px; width: 34vw; }
+}

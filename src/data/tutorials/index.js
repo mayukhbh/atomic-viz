@@ -156,7 +156,7 @@ export const chemicalBondingBasics = {
       title: 'Molecules',
       view: 'reaction',
       reactionId: 'water-formation',
-      stage: 3,
+      stage: 2,
       narration: 'When atoms bond together, they form molecules. Water (H₂O) is a molecule made of 2 hydrogen atoms bonded to 1 oxygen atom.',
       highlights: [],
       camera: { position: [0, 0, 5] }
@@ -211,7 +211,7 @@ export const simpleReactions = {
       title: 'Products',
       view: 'reaction',
       reactionId: 'water-formation',
-      stage: 3,
+      stage: 2,
       narration: 'The new substances formed are called products. Water (H₂O) is the product of this reaction: 2H₂ + O₂ → 2H₂O',
       highlights: [],
       camera: { position: [0, 0, 5] }
@@ -220,7 +220,7 @@ export const simpleReactions = {
       title: 'Conservation of Mass',
       view: 'reaction',
       reactionId: 'water-formation',
-      stage: 3,
+      stage: 2,
       narration: 'In a chemical reaction, atoms are neither created nor destroyed. The same atoms that started as reactants end up in the products - just rearranged!',
       highlights: [],
       camera: { position: [0, 0, 5] }
@@ -390,7 +390,7 @@ export const nuclearChemistry = {
     {
       title: 'Nuclear Fission',
       view: 'reaction',
-      reactionId: 'uranium-fission',
+      reactionId: 'fission',
       stage: 0,
       narration: 'Nuclear fission splits heavy nuclei into smaller fragments. Uranium-235 can absorb a neutron and split, releasing enormous energy plus more neutrons.',
       highlights: [],
@@ -399,7 +399,7 @@ export const nuclearChemistry = {
     {
       title: 'Chain Reaction',
       view: 'reaction',
-      reactionId: 'uranium-fission',
+      reactionId: 'fission',
       stage: 2,
       narration: 'The neutrons released can trigger more fission events, creating a chain reaction. This is the basis for nuclear power plants and atomic weapons.',
       highlights: [],

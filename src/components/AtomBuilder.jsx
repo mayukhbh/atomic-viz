@@ -1,11 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Sphere, Float, Stars } from '@react-three/drei';
-import { ELEMENTS } from '../data/elements';
+import { elementByAtomicNumber, chargeFor, stabilityHint } from '../engine/atomBuilder';
 import { Atom } from './Atom';
-import { Label3D as Text } from './viewer/Label3D';
-import * as THREE from 'three';
-import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Zap, CheckCircle, RotateCcw } from 'lucide-react';
 
 const Particle = ({ type, position }) => {
@@ -25,43 +22,9 @@ export const AtomBuilder = () => {
     const [particles, setParticles] = useState({ protons: 0, neutrons: 0, electrons: 0 });
     const [showResult, setShowResult] = useState(false);
 
-    const element = useMemo(() => {
-        const atomicNumber = particles.protons;
-        return Object.values(ELEMENTS).find(e => e.atomicNumber === atomicNumber) || null;
-    }, [particles.protons]);
-
-    // Stability Logic (Simplified)
-    const stability = useMemo(() => {
-        if (particles.protons === 0) return { stable: true, text: 'Empty' };
-
-        const ratio = particles.neutrons / particles.protons;
-        // Light elements (Z < 20) are stable around N/Z = 1
-        // Heavier elements need more neutrons (N/Z > 1, up to 1.5)
-
-        let stable = false;
-        if (particles.protons === 1) { // Hydrogen
-            stable = particles.neutrons === 0 || particles.neutrons === 1 || particles.neutrons === 2;
-        } else if (particles.protons < 20) {
-            stable = ratio >= 0.8 && ratio <= 1.2;
-        } else {
-            stable = ratio >= 1.0 && ratio <= 1.5;
-        }
-
-        return {
-            stable,
-            text: stable ? 'Stable Isotope' : 'Unstable Isotope',
-            color: stable ? 'text-green-400' : 'text-yellow-400'
-        };
-    }, [particles.protons, particles.neutrons]);
-
-    const charge = useMemo(() => {
-        const q = particles.protons - particles.electrons;
-        return {
-            value: q,
-            text: q === 0 ? 'Neutral Atom' : q > 0 ? `Cation (+${q})` : `Anion (${q})`,
-            color: q === 0 ? 'text-green-400' : q > 0 ? 'text-red-400' : 'text-blue-400'
-        };
-    }, [particles.protons, particles.electrons]);
+    const element=elementByAtomicNumber(particles.protons);
+    const stability=stabilityHint(particles.protons,particles.neutrons);
+    const charge=chargeFor(particles.protons,particles.electrons);
 
     const nucleusParticles = useMemo(() => {
         const p = [];
@@ -118,6 +81,7 @@ export const AtomBuilder = () => {
         setShowResult(false);
     };
 
+    const removeParticle=type=>{setParticles(prev=>({...prev,[type]:Math.max(0,prev[type]-1)}));setShowResult(false);};
     const reset = () => {
         setParticles({ protons: 0, neutrons: 0, electrons: 0 });
         setShowResult(false);
@@ -147,6 +111,7 @@ export const AtomBuilder = () => {
                     </button>
                 </div>
 
+                <div className="flex gap-2 mb-3">{['protons','neutrons','electrons'].map(type=><button key={type} disabled={!particles[type]} onClick={()=>removeParticle(type)} aria-label={`Remove ${type.slice(0,-1)}`} className="text-xs p-2 bg-white/10 rounded disabled:opacity-30">− {type}</button>)}</div>
                 <button onClick={reset} className="w-full py-2 text-sm text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition">
                     Reset All Particles
                 </button>
@@ -185,6 +150,7 @@ export const AtomBuilder = () => {
                     <div className="flex justify-between"><span>Protons (Z)</span> <span>{particles.protons}</span></div>
                     <div className="flex justify-between"><span>Neutrons (N)</span> <span>{particles.neutrons}</span></div>
                     <div className="flex justify-between"><span>Electrons (e-)</span> <span>{particles.electrons}</span></div>
+                    <p className="text-xs text-white/60">Stability is a rough N/Z hint, not isotope data. Visualize Atom shows the neutral element reference.</p>
                     <div className="h-px bg-white/10 my-2"></div>
                     <div className="flex justify-between text-white/80"><span>Mass Number</span> <span>{particles.protons + particles.neutrons}</span></div>
                 </div>

@@ -95,6 +95,7 @@ export function trigonalPair(center, d1, len, up = [0, 0, 1]) {
 // ---- Homologous-series generator: straight-chain alkane CnH(2n+2) ----
 // Builds a proper tetrahedral zig-zag backbone and caps every carbon with hydrogens.
 export function buildAlkane(n) {
+  if (!Number.isInteger(n) || n < 1 || n > 1000) throw new RangeError('Alkane length must be an integer from 1 to 1000');
   // zig-zag geometry giving the exact tetrahedral C-C-C angle
   const a = 0.889, b = 1.257; // derived so |(a,b)|=1.54 and angle=109.47°
   const carbons = [];
@@ -119,7 +120,7 @@ export function buildAlkane(n) {
     }
     if (i === 0 || i === n - 1) {
       const neighbor = i === 0 ? carbons[1] : carbons[n - 2];
-      const d1 = v.norm(v.sub(c, neighbor)); // points away from chain
+      const d1 = v.norm(v.sub(neighbor, c)); // existing bond points toward chain
       tetrahedralTripod(c, d1).forEach((hp) => addH(i, hp));
     } else {
       const d1 = v.norm(v.sub(carbons[i - 1], c));
