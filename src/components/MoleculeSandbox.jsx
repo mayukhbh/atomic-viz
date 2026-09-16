@@ -136,7 +136,7 @@ export const MoleculeSandbox = () => {
         <div className="w-full h-full relative bg-black">
             {/* Notification */}
             {notification && (
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] animate-bounce">
+                <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] animate-bounce">
                     <span role="status" className="font-bold text-lg">{notification}</span>
                 </div>
             )}

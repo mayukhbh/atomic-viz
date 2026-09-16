@@ -21,7 +21,7 @@ npm run preview
 
 The application is a static client-side site; no backend or account is required. Serve the generated `dist` directory over HTTP(S). WebGL and hardware acceleration are needed for 3D. Desktop is the primary experience; tablet and narrow layouts require the remaining manual checks listed below.
 
-PNG exports capture the active canvas, excluding HTML controls. GLTF exports are static supported-mesh snapshots, excluding shader effects, text, trails and animations. Sandbox discoveries use browser local storage, with a session-only fallback when storage is unavailable.
+PNG exports capture the active canvas, excluding HTML controls. GLTF exports are untextured static supported-mesh snapshots, excluding shader effects, text, trails and animations. Sandbox discoveries use browser local storage, with a session-only fallback when storage is unavailable.
 
 These are educational illustrations, not quantum chemistry or isotope-stability predictions. Tutorial text and view changes work; authored camera choreography and scene annotations are not fully implemented.
 

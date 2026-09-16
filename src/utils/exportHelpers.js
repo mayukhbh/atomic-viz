@@ -7,7 +7,7 @@ export function captureScreenshot(canvas,filename='atomicviz'){
  downloadUrl(href,`${filename}-${Date.now()}.png`);
 }
 /** Static mesh snapshot. Labels, trails, stars and postprocessing are unsupported.
- * Snapshot meshes share geometry/materials; never dispose the live scene's resources.
+ * Snapshot meshes share geometry and clone untextured materials; never dispose live resources.
  */
 export async function exportGLTF(scene,filename='atomicviz-model'){
  if(!scene)throw Error('No active 3D scene. Open a view and try again.');
@@ -15,8 +15,11 @@ export async function exportGLTF(scene,filename='atomicviz-model'){
  scene.updateMatrixWorld(true);const snapshot=new Scene();
  scene.traverseVisible(object=>{
   if(!object.isMesh||object.isInstancedMesh||!object.geometry||!object.material||object.material.isShaderMaterial||Array.isArray(object.material))return;
-  const mesh=object.clone(false);mesh.matrixAutoUpdate=false;mesh.matrix.copy(object.matrixWorld);mesh.userData={};snapshot.add(mesh);
+  const mesh=object.clone(false);
+  mesh.material=object.material.clone();
+  // Render-target and procedural textures are not portable GLTF images.
+  for(const key of Object.keys(mesh.material))if(mesh.material[key]?.isTexture)mesh.material[key]=null;mesh.matrixAutoUpdate=false;mesh.matrix.copy(object.matrixWorld);mesh.userData={};snapshot.add(mesh);
  });
  if(!snapshot.children.length)throw Error('This view has no supported meshes. Add atoms or choose a molecule first.');
- const data=await new GLTFExporter().parseAsync(snapshot,{binary:false});downloadBlob(new Blob([JSON.stringify(data)],{type:'model/gltf+json'}),`${filename}-${Date.now()}.gltf`);return data;
+ try { const data=await new GLTFExporter().parseAsync(snapshot,{binary:false});downloadBlob(new Blob([JSON.stringify(data)],{type:'model/gltf+json'}),`${filename}-${Date.now()}.gltf`);return data; } finally { for(const mesh of snapshot.children)mesh.material.dispose(); }
 }

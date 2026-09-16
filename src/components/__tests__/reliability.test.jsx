@@ -9,7 +9,7 @@ import {TutorialOverlay} from '../tutorials/TutorialOverlay';
 import {PeriodicTable} from '../PeriodicTable';
 import {ExperienceBoundary} from '../common/ExperienceBoundary';
 import {captureScreenshot,exportGLTF} from '../../utils/exportHelpers';
-import {Scene,Mesh,BoxGeometry,MeshStandardMaterial} from 'three';
+import {Scene,Mesh,BoxGeometry,MeshStandardMaterial,Texture} from 'three';
 
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
 it('periodic dialog traps focus, handles Escape, and restores its opener',async()=>{
@@ -45,4 +45,13 @@ it('exports actual GLTF mesh data with no WebGL context and rejects empty scenes
  const scene=new Scene(),geometry=new BoxGeometry(),material=new MeshStandardMaterial();scene.add(new Mesh(geometry,material));
  const data=await exportGLTF(scene);expect(data.asset.version).toBe('2.0');expect(data.meshes).toHaveLength(1);expect(scene.children).toHaveLength(1);
  await expect(exportGLTF(new Scene())).rejects.toThrow('no supported meshes');geometry.dispose();material.dispose();
+});
+
+it('exports render-textured meshes without mutating their live material',async()=>{
+ vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});
+ URL.createObjectURL=vi.fn(()=> 'blob:test');URL.revokeObjectURL=vi.fn();
+ const scene=new Scene(),texture=new Texture({width:1,height:1}),material=new MeshStandardMaterial({map:texture}),geometry=new BoxGeometry();
+ scene.add(new Mesh(geometry,material));const data=await exportGLTF(scene);
+ expect(data.meshes).toHaveLength(1);expect(material.map).toBe(texture);expect(data.images).toBeUndefined();
+ geometry.dispose();material.dispose();texture.dispose();
 });
