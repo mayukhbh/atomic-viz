@@ -105,6 +105,7 @@ function AppContent() {
                   : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10'
               }`}
               title={complexity === 'basic' ? 'Switch to University Level' : 'Switch to High School Level'}
+              aria-label={`Explanation level: ${complexity === 'basic' ? 'High School' : 'University'}. ${complexity === 'basic' ? 'Switch to University' : 'Switch to High School'}`}
             >
               <GraduationCap size={14} />
               {complexity === 'basic' ? 'High School' : 'University'}
@@ -119,6 +120,7 @@ function AppContent() {
                     : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10'
                 }`}
                 title={orbitalMode === 'bohr' ? 'Switch to Quantum Orbitals' : 'Switch to Bohr Model'}
+                aria-label={`Orbital model: ${orbitalMode === 'bohr' ? 'Bohr' : 'Quantum'}. ${orbitalMode === 'bohr' ? 'Switch to Quantum Orbitals' : 'Switch to Bohr Model'}`}
               >
                 <Orbit size={14} />
                 {orbitalMode === 'bohr' ? 'Bohr' : 'Quantum'}
@@ -138,6 +140,7 @@ function AppContent() {
             </button>
 
             <button
+              aria-expanded={showExportPanel}
               onClick={() => setShowExportPanel(!showExportPanel)}
               className={`px-3 py-2 rounded-full text-xs font-medium transition-all flex items-center gap-2 border ${
                 showExportPanel

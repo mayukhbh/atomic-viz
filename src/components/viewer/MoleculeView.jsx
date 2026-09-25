@@ -206,8 +206,12 @@ export function MoleculeView({
 
       {showLabels &&
         molecule.atoms.map((atom, i) => (
-          <Billboard key={`l${i}`} position={[atom.pos[0], atom.pos[1], atom.pos[2] + radiusFor(atom.el) + 0.14]}>
+          // Billboard sits on the atom centre; the label is offset along the billboard's
+          // local z, which always points at the camera. Offsetting in molecule space made
+          // labels drift off their atoms (and hide behind them) as the molecule rotated.
+          <Billboard key={`l${i}`} position={atom.pos}>
             <Label3D
+              position={[0, 0, radiusFor(atom.el) + 0.14]}
               fontSize={0.28}
               color="#ffffff"
               anchorX="center"

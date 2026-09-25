@@ -16,7 +16,7 @@ body {
 
 #root {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 }
 
 /* Custom Scrollbar */
@@ -38,15 +38,64 @@ body {
 }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid #67e8f9; outline-offset: 4px; }
 button:disabled { cursor: not-allowed; }
+/* Bottom-anchored panels lift above the tutorial card while one is open
+   (TutorialOverlay publishes --overlay-bottom). Unlayered, so these override utilities. */
+.atom-info { bottom: calc(2rem + var(--overlay-bottom, 0px)); }
+.reaction-panel { bottom: calc(1.5rem + var(--overlay-bottom, 0px)); max-height: calc(100dvh - 7rem - var(--overlay-bottom, 0px)); overflow-y: auto; }
+.organic-info { bottom: calc(1.5rem + var(--overlay-bottom, 0px)); }
+.organic-library { bottom: calc(1.5rem + var(--overlay-bottom, 0px)); }
+.atom-info, .reaction-panel, .organic-info, .organic-library { transition: bottom 200ms ease; }
+
 @media (max-width: 1150px) {
  .app-nav { flex-wrap: wrap; justify-content: center; gap: 12px; padding: 12px; }
  .app-nav > button { display: none; }
- .reaction-panel { max-height: calc(100dvh - 150px); overflow-y: auto; width: min(360px, 47vw); }
+ .reaction-panel { max-height: calc(100dvh - 150px - var(--overlay-bottom, 0px)); width: min(360px, 47vw); }
  .reaction-library { width: min(230px, 31vw); top: 140px; }
+ .organic-library { width: min(18rem, 30vw); }
+ .organic-controls { width: min(14rem, 24vw); }
+ .organic-info { left: calc(min(18rem, 30vw) + 2.5rem) !important; right: calc(min(14rem, 24vw) + 2.5rem); width: auto; translate: none !important; }
+ .builder-stats, .builder-controls { width: min(20rem, 42vw); }
 }
 @media (max-width: 700px) {
  .app-nav { overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; }
  .app-nav > div { flex-shrink: 0; }
- .reaction-panel { left: 12px; bottom: 12px; width: 55vw; }
- .reaction-library { right: 12px; width: 34vw; }
+
+ .atom-info { left: 16px; right: 16px; bottom: calc(1rem + var(--overlay-bottom, 0px)); }
+ .atom-info-name { font-size: 2.75rem; line-height: 1.1; }
+
+ /* Reactions: library becomes a short strip under the nav, controls a bottom sheet. */
+ .reaction-library { top: 76px; left: 12px; right: 12px; width: auto; }
+ .reaction-library > div { max-height: 24dvh; padding: 10px 12px; }
+ .reaction-panel { left: 12px; right: 12px; bottom: calc(12px + var(--overlay-bottom, 0px)); width: auto; max-height: calc(48dvh - var(--overlay-bottom, 0px)); padding: 14px; }
+
+ /* Organic: library on top, compact controls row, info card at the bottom. */
+ .organic-library { top: 76px; left: 12px; right: 12px; bottom: auto; width: auto; max-height: 34dvh; }
+ .organic-library > div { padding: 10px 12px; }
+ .organic-controls { top: auto; bottom: calc(9rem + var(--overlay-bottom, 0px)); left: 12px; right: 12px; width: auto; flex-direction: row; gap: 8px; }
+ .organic-controls > div { flex: 1; padding: 8px; }
+ .organic-controls > div > span { display: none; }
+ .organic-controls button { padding: 6px 8px; font-size: 12px; }
+ .organic-info { left: 12px !important; right: 12px; bottom: calc(12px + var(--overlay-bottom, 0px)); width: auto; }
+
+ /* Builder: add-particle row on top, stats sheet at the bottom. */
+ .builder-controls { top: 76px; left: 12px; right: 12px; width: auto; padding: 12px; }
+ .builder-controls h2 { display: none; }
+ .builder-controls .space-y-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+ .builder-controls .space-y-3 > * { margin: 0; padding: 8px 10px; justify-content: center; }
+ .builder-controls .space-y-3 > * > span:last-child { display: none; }
+ .builder-controls > .flex { margin-bottom: 4px; }
+ .builder-stats { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 42dvh; padding: 14px; }
+ .builder-stats .text-6xl { font-size: 2.25rem; }
+ .builder-stats .mb-6 { margin-bottom: 0.75rem; }
+
+ /* Sandbox */
+ .sandbox-panel { top: 76px; left: 12px; right: 12px; width: auto; padding: 12px; }
+ .sandbox-panel h2 { display: none; }
+ .sandbox-panel .grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 8px; }
+ .sandbox-panel .grid > button { aspect-ratio: auto; padding: 10px 0; }
+ .sandbox-discoveries { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+ *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Gauge, RotateCcw, Play, Pause } from 'lucide-react';
 import { useSettings } from '../../context/useSettings';
 import { REACTIONS, REACTION_CATEGORIES } from '../../data/reactions';
 import { stageIndexAt } from '../../engine/reactionEngine';
+import { formatEnergy } from '../../engine/format';
 import { ReactionScene } from '../../components/reaction/ReactionScene';
 import { EnergyDiagram } from '../../components/reaction/EnergyDiagram';
 import { ViewerCanvas } from '../../components/viewer/ViewerCanvas';
@@ -53,7 +54,9 @@ export function ReactionLab({ request, session, onSaveSession }) {
   const snapshotRef = useRef(null);
   useEffect(() => { snapshotRef.current = { requestKey: request?.key, activeReactionId, reactionDomain, progress }; }, [request?.key, activeReactionId, reactionDomain, progress]);
   useEffect(() => () => { if (snapshotRef.current) onSaveSession?.(snapshotRef.current); }, [onSaveSession]);
-  const activeReaction = REACTIONS.find((r) => r.id === activeReactionId);
+  // Fall back to the first reaction if a saved session or tutorial names an id that no
+  // longer exists; an undefined reaction would otherwise crash the 3D scene.
+  const activeReaction = REACTIONS.find((r) => r.id === activeReactionId) || REACTIONS[0];
 
   const filteredReactions = useMemo(
     () => (reactionDomain === 'all' ? REACTIONS : REACTIONS.filter((r) => r.domain === reactionDomain)),
@@ -87,6 +90,12 @@ export function ReactionLab({ request, session, onSaveSession }) {
     return () => cancelAnimationFrame(rafRef.current);
   }, [isPlaying, activeReaction, playbackSpeed]);
 
+  const selectReaction = useCallback((id) => {
+    setActiveReactionId(id);
+    setIsPlaying(false);
+    setProgress(0);
+  }, []);
+
   const togglePlay = () => {
     if (!isPlaying && progress >= 1) setProgress(0);
     setIsPlaying((p) => !p);
@@ -114,12 +123,12 @@ export function ReactionLab({ request, session, onSaveSession }) {
                 <h2 className="text-lg font-bold">{activeReaction.name}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] text-cyan-400 uppercase tracking-wider">{activeReaction.type}</span>
-                  {activeReaction.domain && (
+                  {activeReaction.domain && activeReaction.domain.toLowerCase() !== String(activeReaction.type).toLowerCase() && (
                     <span className="text-[10px] text-purple-400 uppercase tracking-wider">• {activeReaction.domain}</span>
                   )}
                 </div>
               </div>
-              <button onClick={resetReaction} className="p-2 hover:bg-white/10 rounded-full transition-colors" title="Reset">
+              <button onClick={resetReaction} className="p-2 hover:bg-white/10 rounded-full transition-colors" title="Reset" aria-label="Reset reaction">
                 <RotateCcw size={16} />
               </button>
             </div>
@@ -136,8 +145,8 @@ export function ReactionLab({ request, session, onSaveSession }) {
             {complexity === 'advanced' && activeReaction.enthalpy != null && (
               <div className="mb-3 p-2 bg-white/5 rounded border border-white/10 text-xs">
                 <span className="text-white/50">Enthalpy: </span>
-                <span className={`font-mono ${activeReaction.enthalpy < 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  ΔH = {activeReaction.enthalpy} kJ/mol
+                <span className={`font-mono whitespace-nowrap ${activeReaction.enthalpy < 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  ΔH = {formatEnergy(activeReaction.enthalpy)} kJ/mol
                 </span>
                 <span className="text-white/50 ml-2">({activeReaction.enthalpy < 0 ? 'Exothermic' : 'Endothermic'})</span>
               </div>
@@ -188,33 +197,46 @@ export function ReactionLab({ request, session, onSaveSession }) {
           </motion.div>
         )}
 
-        {/* Reaction picker (right side) */}
-        {viewMode === 'reaction' && (
-          <div className="reaction-library absolute top-28 right-6 w-64 pointer-events-auto z-10">
-            <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto">
-              <span className="text-xs uppercase tracking-wider text-white/40">Reaction library</span>
-              <div className="flex flex-wrap gap-1.5 my-3">
-                <DomainChip label="All" active={reactionDomain === 'all'} onClick={() => setReactionDomain('all')} />
-                {Object.entries(REACTION_CATEGORIES).map(([k, v]) => (
-                  <DomainChip key={k} label={v} active={reactionDomain === k} onClick={() => setReactionDomain(k)} />
-                ))}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                {filteredReactions.map((r) => (
-                  <button
-                    key={r.id}
-                    onClick={() => { setActiveReactionId(r.id); resetReaction(); }}
-                    className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${
-                      activeReactionId === r.id ? 'bg-white/15 border-cyan-400/60 text-cyan-200' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
-                    }`}
-                  >
-                    {r.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Reaction picker (right side). Memoised: it would otherwise rerender on every
+            playback frame because progress lives in this component. */}
+        <ReactionLibrary
+          reactionDomain={reactionDomain}
+          setReactionDomain={setReactionDomain}
+          filteredReactions={filteredReactions}
+          activeReactionId={activeReaction.id}
+          onPick={selectReaction}
+        />
 
  </>;
 }
+
+const ReactionLibrary = memo(function ReactionLibrary({ reactionDomain, setReactionDomain, filteredReactions, activeReactionId, onPick }) {
+  return (
+    <div className="reaction-library absolute top-28 right-6 w-64 pointer-events-auto z-10">
+      <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto">
+        <span className="text-xs uppercase tracking-wider text-white/40">Reaction library</span>
+        <div className="flex flex-wrap gap-1.5 my-3">
+          <DomainChip label="All" active={reactionDomain === 'all'} onClick={() => setReactionDomain('all')} />
+          {Object.entries(REACTION_CATEGORIES).map(([k, v]) => (
+            <DomainChip key={k} label={v} active={reactionDomain === k} onClick={() => setReactionDomain(k)} />
+          ))}
+        </div>
+        <div className="flex flex-col gap-1.5">
+          {filteredReactions.map((r) => (
+            <button
+              key={r.id}
+              aria-pressed={activeReactionId === r.id}
+              onClick={() => onPick(r.id)}
+              className={`text-left px-3 py-2 rounded-xl border text-sm transition-all ${
+                activeReactionId === r.id ? 'bg-white/15 border-cyan-400/60 text-cyan-200' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+              }`}
+            >
+              {r.name}
+            </button>
+          ))}
+          {filteredReactions.length === 0 && <p className="text-xs text-white/50">No reactions in this category yet.</p>}
+        </div>
+      </div>
+    </div>
+  );
+});

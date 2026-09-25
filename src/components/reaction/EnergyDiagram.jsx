@@ -39,11 +39,12 @@ export function EnergyDiagram({ reaction, progress }) {
   const reactantY = yToPx(0);
   const productY = yToPx(productLevel);
   const peakY = yToPx(barrier);
-  const accent = exothermic ? '#ff7a59' : '#59a6ff';
+  const hasEnthalpy = Number.isFinite(reaction.enthalpy) && reaction.enthalpy !== 0;
+  const accent = !hasEnthalpy ? '#9aa5b1' : exothermic ? '#ff7a59' : '#59a6ff';
 
   return (
     <div className="w-full">
-      <svg role="img" aria-label="Illustrative reaction energy profile" viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
+      <svg role="img" aria-label={`Illustrative energy profile: ${!hasEnthalpy ? "no net enthalpy data" : exothermic ? "exothermic, products lower than reactants" : "endothermic, products higher than reactants"}`} viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
         <defs>
           <linearGradient id="ediag-fill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
@@ -54,16 +55,22 @@ export function EnergyDiagram({ reaction, progress }) {
         {/* axes */}
         <line x1={pad.l} y1={pad.t} x2={pad.l} y2={pad.t + plotH} stroke="#ffffff20" />
         <line x1={pad.l} y1={pad.t + plotH} x2={pad.l + plotW} y2={pad.t + plotH} stroke="#ffffff20" />
-        <text x={4} y={pad.t + plotH / 2} fill="#ffffff55" fontSize="8" transform={`rotate(-90 10 ${pad.t + plotH / 2})`}>Energy</text>
-        <text x={pad.l + plotW / 2} y={H - 4} fill="#ffffff55" fontSize="8" textAnchor="middle">Reaction progress</text>
+        <text x={12} y={pad.t + plotH / 2} fill="#ffffff80" fontSize="8" textAnchor="middle" transform={`rotate(-90 12 ${pad.t + plotH / 2})`}>Energy</text>
+        {/* Stage labels act as the x-axis; they live in the SVG so they scale with the
+            chart instead of colliding on narrow panels. */}
+        {[['Reactants', 0.125], ['Transition state', 0.5], ['Products', 0.875]].map(([label, x]) => (
+          <text key={label} x={xToPx(x)} y={H - 8} fill="#ffffff80" fontSize="8" textAnchor="middle">{label}</text>
+        ))}
 
         {/* reactant / product level guides */}
         <line x1={pad.l} y1={reactantY} x2={xToPx(0.25)} y2={reactantY} stroke="#ffffff30" strokeDasharray="2 2" />
         <line x1={xToPx(0.75)} y1={productY} x2={pad.l + plotW} y2={productY} stroke="#ffffff30" strokeDasharray="2 2" />
 
-        {/* ΔH bracket */}
+        {/* ΔH bracket (omitted when there is no enthalpy to show) */}
+        {hasEnthalpy && <>
         <line x1={pad.l + plotW - 4} y1={reactantY} x2={pad.l + plotW - 4} y2={productY} stroke={accent} strokeWidth="1" />
         <text x={pad.l + plotW - 8} y={(reactantY + productY) / 2} fill={accent} fontSize="8" textAnchor="end">ΔH</text>
+        </>}
 
         {/* activation energy marker */}
         <line x1={xToPx(0.5)} y1={peakY} x2={xToPx(0.5)} y2={reactantY} stroke="#ffffff35" strokeDasharray="2 2" />
@@ -78,11 +85,6 @@ export function EnergyDiagram({ reaction, progress }) {
         <circle cx={mx} cy={my} r="8" fill={accent} opacity="0.3" />
       </svg>
 
-      <div className="flex justify-between text-[10px] text-white/50 px-1 -mt-1">
-        <span>Reactants</span>
-        <span>Transition state</span>
-        <span>Products</span>
-      </div>
     </div>
   );
 }

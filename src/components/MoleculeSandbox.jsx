@@ -1,14 +1,16 @@
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { bondMovedAtom, recognizeMolecules, readDiscoveries, saveDiscoveries, SANDBOX_ELEMENTS } from '../engine/sandbox';
 import { MOLECULE_LIB } from '../engine/molecules';
 import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
-import { OrbitControls, Line, Stars } from '@react-three/drei';
+import { OrbitControls, Line, Stars, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { Label3D as Text } from './viewer/Label3D';
 
-// Simple UUID generator to avoid dependencies
-const uuid = () => crypto.randomUUID();
+// crypto.randomUUID only exists in secure contexts (HTTPS/localhost); a plain-HTTP
+// deployment would otherwise throw on the first "add atom" click.
+let fallbackId = 0;
+const uuid = () => (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `atom-${Date.now().toString(36)}-${(fallbackId++).toString(36)}`);
 // Dragging uses R3F pointer events (onPointerDown/Move/Up) raycast onto a virtual plane —
 // no extra gesture library required.
 
@@ -56,7 +58,9 @@ const DraggableAtom = ({ id, element, position, onDrag, onDragEnd, onDraggingCha
                 <sphereGeometry args={[radius, 32, 32]} />
                 <meshStandardMaterial color={color} roughness={0.2} metalness={0.5} />
             </mesh>
+            <Billboard>
             <Text
+                raycast={() => null}
                 position={[0, 0, radius + 0.1]}
                 fontSize={0.3}
                 color="white"
@@ -65,6 +69,7 @@ const DraggableAtom = ({ id, element, position, onDrag, onDragEnd, onDraggingCha
             >
                 {element}
             </Text>
+            </Billboard>
         </group>
     );
 };
@@ -86,7 +91,12 @@ export const MoleculeSandbox = () => {
     const [atoms, setAtoms] = useState([]);
     const [bonds, setBonds] = useState([]);
     const [discovered, setDiscovered] = useState(() => {try{return readDiscoveries(localStorage);}catch{return [];}});
-    const [notification, setNotification] = useState(null); // Added notification state
+    const [notification, setNotification] = useState(null);
+    useEffect(() => {
+        if (!notification) return;
+        const timer = setTimeout(() => setNotification(null), 4500);
+        return () => clearTimeout(timer);
+    }, [notification]);
 
     // Valency rules
 
@@ -136,13 +146,13 @@ export const MoleculeSandbox = () => {
         <div className="w-full h-full relative bg-black">
             {/* Notification */}
             {notification && (
-                <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] animate-bounce">
+                <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500/20 backdrop-blur-md border border-green-500 text-green-200 px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)] pointer-events-none">
                     <span role="status" className="font-bold text-lg">{notification}</span>
                 </div>
             )}
 
             {/* UI Controls */}
-            <div className="absolute top-32 left-4 z-10 bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white shadow-2xl w-64">
+            <div className="sandbox-panel absolute top-32 left-4 z-10 bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white shadow-2xl w-64">
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <div className="w-2 h-6 bg-purple-500 rounded-full"></div>
                     Sandbox
@@ -152,6 +162,7 @@ export const MoleculeSandbox = () => {
                         <button
                             key={el}
                             onClick={() => addAtom(el)}
+                            aria-label={`Add ${el} atom`}
                             className="aspect-square flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 font-bold text-lg transition"
                         >
                             {el}
@@ -163,7 +174,12 @@ export const MoleculeSandbox = () => {
                 </button>
             </div>
 
-            <div className="absolute bottom-6 right-6 z-10 bg-black/60 p-4 rounded-xl border border-white/10 text-white max-w-xs"><h3>Saved discoveries</h3><p className="text-xs text-white/60">{discovered.length?discovered.map(id=>MOLECULE_LIB[id].formula).join(' · '):'Connect atoms to discover molecules.'}</p><p className="text-xs text-white/50">Connectivity model; bond orders are not simulated.</p></div>
+            {atoms.length < 2 && (
+                <p className="sandbox-hint absolute left-1/2 top-1/2 translate-y-24 -translate-x-1/2 z-10 max-w-xs text-center text-sm text-white/60 pointer-events-none">
+                    {atoms.length === 0 ? 'Add atoms from the panel, then drag one close to another to form a bond.' : 'Add another atom and drag them together.'}
+                </p>
+            )}
+            <div className="sandbox-discoveries absolute bottom-6 right-6 z-10 bg-black/60 p-4 rounded-xl border border-white/10 text-white max-w-xs"><h3 className="text-sm font-semibold mb-1">Saved discoveries</h3><p className="text-xs text-white/60">{discovered.length?discovered.map(id=>MOLECULE_LIB[id].formula).join(' · '):'Connect atoms to discover molecules.'}</p><p className="text-xs text-white/50">Connectivity model; bond orders are not simulated.</p></div>
             <Canvas camera={{ position: [0, 0, 10], fov: 45 }}>
                 <color attach="background" args={['#050505']} />
                 <ambientLight intensity={0.5} />

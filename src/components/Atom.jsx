@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Sphere } from '@react-three/drei';
+import { Sphere, Billboard } from '@react-three/drei';
 import { ELEMENTS } from '../data/elements';
 import { Label3D as Text } from './viewer/Label3D';
 import { BohrModel } from './atoms/BohrModel';
@@ -33,7 +33,8 @@ export const Atom = ({
             {/* Inner Glow */}
             <pointLight distance={3} intensity={2} color={data.color} />
 
-            {/* Label */}
+            {/* Label: billboarded so it stays in front of the nucleus from any orbit angle */}
+            <Billboard>
             <Text
                 position={[0, 0, data.radius + 0.1]}
                 fontSize={data.radius * 0.6}
@@ -45,6 +46,7 @@ export const Atom = ({
             >
                 {data.symbol}
             </Text>
+            </Billboard>
 
             {/* Electron visualization - switches between Bohr and Quantum modes */}
             {showElectrons && orbitalMode === 'bohr' && (

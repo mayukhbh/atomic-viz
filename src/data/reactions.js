@@ -613,36 +613,36 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0] },
-          { id: 'n_in', element: 'H', position: [-5, 0, 0] },
-          { id: 'ba', element: 'Fe', position: [0, 0, 0], hidden: true },
-          { id: 'kr', element: 'Ar', position: [0, 0, 0], hidden: true },
-          { id: 'n1', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n2', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n3', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [-5, 0, 0] },
+          { id: 'ba', element: 'Ba', position: [0, 0, 0], hidden: true },
+          { id: 'kr', element: 'Kr', position: [0, 0, 0], hidden: true },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0] },
-          { id: 'n_in', element: 'H', position: [-0.8, 0, 0] },
-          { id: 'ba', element: 'Fe', position: [0, 0, 0], hidden: true },
-          { id: 'kr', element: 'Ar', position: [0, 0, 0], hidden: true },
-          { id: 'n1', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n2', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n3', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [-0.8, 0, 0] },
+          { id: 'ba', element: 'Ba', position: [0, 0, 0], hidden: true },
+          { id: 'kr', element: 'Kr', position: [0, 0, 0], hidden: true },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0], hidden: true },
-          { id: 'n_in', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'ba', element: 'Fe', position: [-2, 2, 0], hidden: false },
-          { id: 'kr', element: 'Ar', position: [2, -2, 0], hidden: false },
-          { id: 'n1', element: 'H', position: [3, 3, 0], hidden: false },
-          { id: 'n2', element: 'H', position: [3, 0, 0], hidden: false },
-          { id: 'n3', element: 'H', position: [0, 3, 0], hidden: false }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'ba', element: 'Ba', position: [-2, 2, 0], hidden: false },
+          { id: 'kr', element: 'Kr', position: [2, -2, 0], hidden: false },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [3, 3, 0], hidden: false },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [3, 0, 0], hidden: false },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 3, 0], hidden: false }
         ],
         bonds: []
       }
@@ -663,28 +663,28 @@ export const REACTIONS = [
     stages: [
       {
         atoms: [
-          { id: 'd', element: 'H', position: [-2, 0, 0] },
-          { id: 't', element: 'H', position: [2, 0, 0] },
+          { id: 'd', element: 'H', label: '²H', position: [-2, 0, 0] },
+          { id: 't', element: 'H', label: '³H', position: [2, 0, 0] },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true },
-          { id: 'n', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
-          { id: 'd', element: 'H', position: [-0.3, 0, 0] },
-          { id: 't', element: 'H', position: [0.3, 0, 0] },
+          { id: 'd', element: 'H', label: '²H', position: [-0.3, 0, 0] },
+          { id: 't', element: 'H', label: '³H', position: [0.3, 0, 0] },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true },
-          { id: 'n', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
-          { id: 'd', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 't', element: 'H', position: [0, 0, 0], hidden: true },
+          { id: 'd', element: 'H', label: '²H', position: [0, 0, 0], hidden: true },
+          { id: 't', element: 'H', label: '³H', position: [0, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [-1.5, 0, 0], hidden: false },
-          { id: 'n', element: 'H', position: [3, 0, 0], hidden: false }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [3, 0, 0], hidden: false }
         ],
         bonds: []
       }
@@ -706,7 +706,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0] },
-          { id: 'th', element: 'Fe', position: [0, 0, 0], hidden: true },
+          { id: 'th', element: 'Th', position: [0, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
@@ -714,7 +714,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0] },
-          { id: 'th', element: 'Fe', position: [-0.5, 0, 0], hidden: true },
+          { id: 'th', element: 'Th', position: [-0.5, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [1, 0, 0], hidden: true }
         ],
         bonds: []
@@ -722,7 +722,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0], hidden: true },
-          { id: 'th', element: 'Fe', position: [-1.5, 0, 0], hidden: false },
+          { id: 'th', element: 'Th', position: [-1.5, 0, 0], hidden: false },
           { id: 'he', element: 'He', position: [3, 0, 0], hidden: false }
         ],
         bonds: []
@@ -746,7 +746,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [0, 0, 0] },
           { id: 'n', element: 'N', position: [0, 0, 0], hidden: true },
-          { id: 'e', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
@@ -754,7 +754,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [-0.3, 0, 0] },
           { id: 'n', element: 'N', position: [0, 0, 0], hidden: true },
-          { id: 'e', element: 'H', position: [0.5, 0.5, 0], hidden: true }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [0.5, 0.5, 0], hidden: true }
         ],
         bonds: []
       },
@@ -762,7 +762,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [0, 0, 0], hidden: true },
           { id: 'n', element: 'N', position: [-1, 0, 0], hidden: false },
-          { id: 'e', element: 'H', position: [3, 1, 0], hidden: false }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [3, 1, 0], hidden: false }
         ],
         bonds: []
       }

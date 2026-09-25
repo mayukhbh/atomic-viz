@@ -140,6 +140,16 @@ export const TutorialOverlay = ({
     endTutorial
   } = useSettings();
 
+  const [cardEl, setCardEl] = React.useState(null);
+  // Publish the card height so bottom-anchored panels (element info, reaction controls)
+  // can lift above it instead of being covered while a tutorial runs.
+  React.useLayoutEffect(() => {
+    const el = cardEl, root = document.documentElement;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => root.style.setProperty('--overlay-bottom', `${Math.ceil(el.getBoundingClientRect().height) + 16}px`));
+    ro.observe(el);
+    return () => { ro.disconnect(); root.style.removeProperty('--overlay-bottom'); };
+  }, [cardEl]);
   const tutorial = getTutorialById(currentTutorial);
   const step = tutorial?.steps[tutorialStep];
   React.useEffect(() => { if (tutorialActive && step) onApplyStep(step); }, [tutorialActive, step, onApplyStep]);
@@ -180,7 +190,7 @@ export const TutorialOverlay = ({
       exit={{ opacity: 0, y: 50 }}
       className="fixed bottom-0 left-0 right-0 z-[150] p-4 pointer-events-none"
     >
-      <div className="max-w-3xl mx-auto pointer-events-auto">
+      <div ref={setCardEl} className="max-w-3xl mx-auto pointer-events-auto">
         <div className="bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
           {/* Header */}
           <div className="px-6 py-3 bg-white/5 border-b border-white/10 flex justify-between items-center">
