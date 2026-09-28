@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Trail } from '@react-three/drei';
+import { bohrShellRadius, ELECTRON_SIZE } from '../../engine/atomFraming';
 
 const GOLDEN = 2.399963; // golden angle (rad) — spreads shell planes evenly
 
@@ -47,9 +48,9 @@ export const BohrModel = ({
     if (!elementData?.electrons) return { electrons: [], shells: [] };
     const eList = [];
     const shellList = [];
-    let shellRadius = elementData.radius * 1.6;
 
     elementData.electrons.forEach((count, shellIndex) => {
+      const shellRadius = bohrShellRadius(elementData, shellIndex);
       const tilt = 0.35 + shellIndex * GOLDEN;
       const azimuth = shellIndex * (GOLDEN * 0.5);
       shellList.push({ radius: shellRadius, tilt, azimuth });
@@ -65,12 +66,11 @@ export const BohrModel = ({
           color: electronColor,
           tilt,
           azimuth,
-          size: 0.045,
+          size: ELECTRON_SIZE,
           trailLength,
           trailWidth,
         });
       }
-      shellRadius += 0.55;
     });
     return { electrons: eList, shells: shellList };
   }, [elementData, electronColor]);
