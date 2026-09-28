@@ -18,7 +18,8 @@ export function useElementDeepLink() {
   useEffect(() => {
     if (reported.current || !initial.fromLink) return;
     reported.current = true;
-    track('atom_deeplink_opened', { element: initial.symbol });
+    const navigationType = window.performance?.getEntriesByType?.('navigation')?.[0]?.type || 'unknown';
+    track('atom_deeplink_opened', { element: initial.symbol, navigationType });
   }, [initial]);
 
   useEffect(() => {

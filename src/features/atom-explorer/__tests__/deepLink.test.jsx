@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, act, cleanup } from '@testing-library/react';
 import { normalizeSymbol, parseElementParam, withElementParam, DEFAULT_ELEMENT } from '../../../engine/deepLink';
 import { ANALYTICS_EVENT } from '../../../engine/analytics';
-import { bohrOuterRadius, fitDistance, MIN_ATOM_DISTANCE } from '../../../engine/atomFraming';
+import { bohrOuterRadius, fitDistance, MIN_ATOM_DISTANCE, shouldRefitCamera } from '../../../engine/atomFraming';
 import { ELEMENTS } from '../../../data/elements';
 import { useElementDeepLink } from '../useElementDeepLink';
 import { shareAtom, shareMessage } from '../shareAtom';
@@ -46,8 +46,16 @@ describe('useElementDeepLink', () => {
     expect(result.current[0]).toBe('Au');
     expect(window.location.search).toBe('?el=Au'); // canonicalised
     expect(events.filter((e) => e.name === 'atom_deeplink_opened')).toEqual([
-      expect.objectContaining({ name: 'atom_deeplink_opened', props: { element: 'Au' } }),
+      expect.objectContaining({ name: 'atom_deeplink_opened', props: { element: 'Au', navigationType: expect.any(String) } }),
     ]);
+  });
+
+  it('marks a reload so it can be excluded from arrival estimates', () => {
+    const navigation = vi.spyOn(window.performance, 'getEntriesByType').mockReturnValue([{ type: 'reload' }]);
+    window.history.replaceState(null, '', '/?el=Au');
+    renderHook(() => useElementDeepLink());
+    expect(events[0].props).toEqual({ element: 'Au', navigationType: 'reload' });
+    navigation.mockRestore();
   });
 
   it('keeps a plain visit on a clean URL and does not report a deep link', () => {
@@ -93,6 +101,14 @@ describe('camera framing', () => {
   const at = (symbol, viewport) => fitDistance({ radius: bohrOuterRadius(ELEMENTS[symbol]) * 1.5, fovDeg: 45, ...viewport });
   const desktop = { aspect: 1440 / 900, compact: false };
   const phone = { aspect: 390 / 844, compact: true };
+
+  it('preserves user zoom and ignores browser-chrome height changes', () => {
+    const previous = { radius: 5, width: 390, height: 844, distance: 24 };
+    expect(shouldRefitCamera(previous, { radius: 5, width: 390, height: 790, distance: 24 })).toBe(false);
+    expect(shouldRefitCamera(previous, { radius: 5, width: 390, height: 600, distance: 18 })).toBe(false);
+    expect(shouldRefitCamera(previous, { radius: 5, width: 844, height: 390, distance: 24 })).toBe(true);
+    expect(shouldRefitCamera(previous, { radius: 6, width: 390, height: 790, distance: 18 })).toBe(true);
+  });
 
   it('keeps the original distance for light atoms on desktop', () => {
     expect(at('H', desktop)).toBe(MIN_ATOM_DISTANCE);

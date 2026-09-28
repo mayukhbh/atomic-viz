@@ -27,10 +27,12 @@ const Electron = ({ radius, speed, offset, color, tilt, azimuth, size, trailLeng
 };
 
 const OrbitalRing = ({ radius, tilt, azimuth, color, opacity }) => (
-  <mesh rotation={[tilt + Math.PI / 2, azimuth, 0]}>
-    <torusGeometry args={[radius, 0.008, 8, 96]} />
-    <meshBasicMaterial color={color} transparent opacity={opacity} />
-  </mesh>
+  <group rotation={[tilt, azimuth, 0]}>
+    <mesh rotation={[Math.PI / 2, 0, 0]}>
+      <torusGeometry args={[radius, 0.008, 8, 96]} />
+      <meshBasicMaterial color={color} transparent opacity={opacity} />
+    </mesh>
+  </group>
 );
 
 /**

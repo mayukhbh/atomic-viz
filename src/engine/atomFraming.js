@@ -35,3 +35,11 @@ export function fitDistance({ radius, fovDeg, aspect, compact }) {
   const horizontal = radius / (tanHalf * safeAspect * fillH);
   return Math.max(MIN_ATOM_DISTANCE, vertical, horizontal);
 }
+
+/** Keep a user's zoom when only the viewport changes; ignore small browser-chrome height shifts. */
+export function shouldRefitCamera(previous, { radius, width, height, distance }) {
+  if (!previous || previous.radius !== radius) return true;
+  if (Math.abs(distance - previous.distance) > 0.01) return false;
+  if (width === previous.width && Math.abs(height - previous.height) / previous.height < 0.15) return false;
+  return true;
+}

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
-import { COMPACT_MAX_WIDTH, FRAMING, fitDistance } from '../engine/atomFraming';
+import { COMPACT_MAX_WIDTH, FRAMING, fitDistance, shouldRefitCamera } from '../engine/atomFraming';
 import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Stars, AdaptiveDpr } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
@@ -10,6 +10,7 @@ import { StudioEnvironment } from './viewer/StudioEnvironment';
 // Keeps the user's current viewing direction and only changes the distance. On phones the
 // projection is offset so the atom sits in the upper part of the screen, above the text.
 function FitCamera({ radius }) {
+    const previous = useRef(null);
     const camera = useThree((state) => state.camera);
     const width = useThree((state) => state.size.width);
     const height = useThree((state) => state.size.height);
@@ -17,8 +18,12 @@ function FitCamera({ radius }) {
         if (!radius || !width || !height) return;
         const compact = width <= COMPACT_MAX_WIDTH;
         const distance = fitDistance({ radius, fovDeg: camera.fov, aspect: width / height, compact });
-        const direction = camera.position.lengthSq() > 1e-6 ? camera.position.clone().normalize() : camera.position.set(0, 0, 1);
-        camera.position.copy(direction.multiplyScalar(distance));
+        const currentDistance = camera.position.length();
+        if (shouldRefitCamera(previous.current, { radius, width, height, distance: currentDistance })) {
+            const direction = currentDistance > 1e-6 ? camera.position.clone().normalize() : camera.position.set(0, 0, 1);
+            camera.position.copy(direction.multiplyScalar(distance));
+        }
+        previous.current = { radius, width, height, distance: camera.position.length() };
         const shift = compact ? FRAMING.compact.shift : FRAMING.roomy.shift;
         if (shift) camera.setViewOffset(width, height, 0, Math.round(height * shift), width, height);
         else camera.clearViewOffset();
