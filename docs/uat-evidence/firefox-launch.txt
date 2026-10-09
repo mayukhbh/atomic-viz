@@ -1,0 +1,1 @@
+Firefox 153 was downloaded. Launch attempts did not yield a usable page or completed browser result. No Firefox UAT or screenshots are claimed.

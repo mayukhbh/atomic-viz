@@ -138,9 +138,13 @@ export function ReactionLab({ request, session, onSaveSession }) {
             </p>
 
             {/* Energy diagram */}
-            <div className="mb-3 bg-white/[0.03] rounded-xl border border-white/5 p-2">
+            {activeReaction.enthalpy != null && <div className="mb-3 bg-white/[0.03] rounded-xl border border-white/5 p-2">
               <EnergyDiagram reaction={activeReaction} progress={progress} />
-            </div>
+              <p className="text-xs text-white/60">Illustrative energy curve; barrier height and timing are not calculated.</p>
+            </div>}
+
+            <p className="text-xs text-white/60 mb-3">Schematic animation, not an atom-balanced simulation or a molecular mechanism. Some atoms and particles are omitted; sizes and timing are not to scale.</p>
+            {complexity === 'advanced' && activeReaction.energyNote && <p className="text-xs text-white/80 mb-3">{activeReaction.energyNote}</p>}
 
             {complexity === 'advanced' && activeReaction.enthalpy != null && (
               <div className="mb-3 p-2 bg-white/5 rounded border border-white/10 text-xs">
@@ -149,6 +153,7 @@ export function ReactionLab({ request, session, onSaveSession }) {
                   ΔH = {formatEnergy(activeReaction.enthalpy)} kJ/mol
                 </span>
                 <span className="text-white/50 ml-2">({activeReaction.enthalpy < 0 ? 'Exothermic' : 'Endothermic'})</span>
+                <p className="text-white/50 mt-1">Per mole of reaction as written.</p>
               </div>
             )}
 

@@ -995,7 +995,7 @@ export const ELEMENTS = {
   },
   Ds: {
     symbol: 'Ds', name: 'Darmstadtium', atomicNumber: 110, category: 'Transition Metal', color: '#D1D100',
-    radius: 1.0, mass: 281, electrons: [2, 8, 18, 32, 32, 17, 1], electronConfiguration: '[Rn] 5f¹⁴ 6d⁸ 7s²', block: 'd',
+    radius: 1.0, mass: 281, electrons: [2, 8, 18, 32, 32, 16, 2], electronConfiguration: '[Rn] 5f¹⁴ 6d⁸ 7s²', block: 'd',
     electronegativity: null, xpos: 10, ypos: 7,
     description: {
       basic: "Named after Darmstadt, Germany, where it was discovered.",
@@ -1004,7 +1004,7 @@ export const ELEMENTS = {
   },
   Rg: {
     symbol: 'Rg', name: 'Roentgenium', atomicNumber: 111, category: 'Transition Metal', color: '#C9C900',
-    radius: 1.0, mass: 282, electrons: [2, 8, 18, 32, 32, 18, 1], electronConfiguration: '[Rn] 5f¹⁴ 6d⁹ 7s²', block: 'd',
+    radius: 1.0, mass: 282, electrons: [2, 8, 18, 32, 32, 17, 2], electronConfiguration: '[Rn] 5f¹⁴ 6d⁹ 7s²', block: 'd',
     electronegativity: null, xpos: 11, ypos: 7,
     description: {
       basic: "Named after Wilhelm Röntgen, discoverer of X-rays.",

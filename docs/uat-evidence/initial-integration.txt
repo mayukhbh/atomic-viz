@@ -1,0 +1,389 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> atomic-viz-app@0.0.0 test:run
+> vitest run src/components/__tests__/launchReadiness.test.jsx
+
+
+ RUN  v5.0.0 /workspace/scratch/415a9af320da/atomic-viz
+
+stderr | src/components/__tests__/launchReadiness.test.jsx
+THREE.WARNING: Multiple instances of Three.js being imported.
+
+ ❯ src/components/__tests__/launchReadiness.test.jsx (7 tests | 4 failed) 16001ms
+   × every organic molecule selects and render controls respond 5013ms
+   × all tutorials can traverse every step and finish 5021ms
+   × nuclear and free energies are not presented as enthalpy or chemical activation curves 183ms
+   × atom model limitations are visible to sighted visitors 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/__tests__/launchReadiness.test.jsx > every organic molecule selects and render controls respond
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components/__tests__/launchReadiness.test.jsx:25:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/components/__tests__/launchReadiness.test.jsx > all tutorials can traverse every step and finish
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/components/__tests__/launchReadiness.test.jsx:35:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/components/__tests__/launchReadiness.test.jsx > nuclear and free energies are not presented as enthalpy or chemical activation curves
+TestingLibraryElementError: Unable to find an element with the text: /17.6 MeV per event/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mstyle[39m=[32m"position: relative; width: 100vw; height: 100dvh; overflow: hidden; background: rgb(4, 6, 10);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"position: absolute; inset: 0; z-index: 0;"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"reaction-panel absolute bottom-6 left-6 p-5 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl text-white w-[380px] pointer-events-auto shadow-2xl"[39m
+          [33mstyle[39m=[32m"opacity: 0; transform: translateY(20px);"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex justify-between items-start mb-3"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"text-lg font-bold"[39m
+              [36m>[39m
+                [0mHydrogen Fusion[0m
+              [36m</h2>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-2 mt-1"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-[10px] text-cyan-400 uppercase tracking-wider"[39m
+                [36m>[39m
+                  [0mNuclear[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Reset reaction"[39m
+              [33mclass[39m=[32m"p-2 hover:bg-white/10 rounded-full transition-colors"[39m
+              [33mtitle[39m=[32m"Reset"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-gray-200 text-sm mb-3 font-mono bg-black/40 p-2 rounded border border-white/5 text-center"[39m
+          [36m>[39m
+            [0m²H + ³H → ⁴He + n[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-3 bg-white/[0.03] rounded-xl border border-white/5 p-2"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"w-full"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-label[39m=[32m"Illustrative energy profile: exothermic, products lower than reactants"[39m
+                [33mclass[39m=[32m"w-full h-auto"[39m
+                [33mrole[39m=[32m"img"[39m
+                [33mviewBox[39m=[32m"0 0 300 150"[39m
+              [36m>[39m
+                [36m<defs>[39m
+                  [36m<lineargradient[39m
+                    [33mid[39m=[32m"ediag-fill"[39m
+                    [33mx1[39m=[32m"0"[39m
+                    [33mx2[39m=[32m"0"[39m
+                    [33my1[39m=[32m"0"[39m
+                    [33my2[39m=[32m"1"[39m
+                  [36m>[39m
+                    [36m<stop[39m
+                      [33moffset[39m=[32m"0%"[39m
+                      [33mstop-color[39m=[32m"#ff7a59"[39m
+                      [33mstop-opacity[39m=[32m"0.35"[39m
+                    [36m/>[39m
+                    [36m<stop[39m
+                      [33moffset[39m=[32m"100%"[39m
+                      [33mstop-color[39m=[32m"#ff7a59"[39m
+                      [33mstop-opacity[39m=[32m"0"[39m
+                    [36m/>[39m
+                  [36m</lineargradient>[39m
+                [36m</defs>[39m
+                [36m<line[39m
+                  [33mstroke[39m=[32m"#ffffff20"[39m
+                  [33mx1[39m=[32m"34"[39m
+                  [33mx2[39m=[32m"34"[39m
+                  [33my1[39m=[32m"16"[39m
+                  [33my2[39m=[32m"124"[39m
+                [36m/>[39m
+                [36m<line[39m
+                  [33mstroke[39m=[32m"#ffffff20"[39m
+                  [33mx1[39m=[32m"34"[39m
+                  [33mx2[39m=[32m"286"[39m
+                  [33my1[39m=[32m"124"[39m
+                  [33my2[39m=[32m"124"[39m
+                [36m/>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"#ffffff80"[39m
+                  [33mfont-size[39m=[32m"8"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mtransform[39m=[32m"rotate(-90 12 70)"[39m
+                  [33mx[39m=[32m"12"[39m
+                  [33my[39m=[32m"70"[39m
+                [36m>[39m
+                  [0mEnergy[0m
+                [36m</text>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"#ffffff80"[39m
+                  [33mfont-size[39m=[32m"8"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mx[39m=[32m"65.5"[39m
+                  [33my[39m=[32m"142"[39m
+                [36m>[39m
+                  [0mReactants[0m
+                [36m</text>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"#ffffff80"[39m
+                  [33mfont-size[39m=[32m"8"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mx[39m=[32m"160"[39m
+                  [33my[39m=[32m"142"[39m
+                [36m>[39m
+                  [0mTransition state[0m
+                [36m</text>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"#ffffff80"[39m
+                  [33mfont-size[39m=[32m"8"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mx[39m=[32m"254.5"[39m
+                  [33my[39m=[32m"142"[39m
+                [36m>[39m
+                  [0mProducts[0m
+                [36m</text>[39m
+                [36m<line[39m
+                  [33mstroke[39m=[32m"#ffffff30"[39m
+                  [33mstroke-dasharray[39m=[32m"2 2"[39m
+                  [33mx1[39m=[32m"34"[39m
+                  [33mx2[39m=[32m"97"[39m
+                  [33my1[39m=[32m"32.975814646949075"[39m
+                  [33my2[39m=...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/launchReadiness.test.jsx:46:47
+     44| it('nuclear and free energies are not presented as enthalpy or chemica…
+     45|  render(<App/>);await click('Explanation level: High School. Switch to…
+     46|  await click('Hydrogen Fusion');expect(screen.getByText(/17.6 MeV per …
+       |                                               ^
+     47|  await click('ATP Synthesis');expect(screen.getByText(/ΔG°′ = \+30.5 k…
+     48|  await click('Zinc-Copper Electrochemistry');expect(screen.getByText(/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/components/__tests__/launchReadiness.test.jsx > atom model limitations are visible to sighted visitors
+TestingLibraryElementError: Unable to find an element with the text: /not physical electron paths/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mstyle[39m=[32m"position: relative; width: 100vw; height: 100dvh; overflow: hidden; background: rgb(4, 6, 10);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"position: absolute; inset: 0; z-index: 0;"[39m
+      [36m/>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"sr-only"[39m
+      [36m>[39m
+        [0mInteractive chemistry illustration. Drag to rotate and scroll to zoom. Use the controls for element and reaction details. Orbital shapes and animations are educational approximations.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"position: absolute; inset: 0; z-index: 100; pointer-events: none;"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"Main navigation"[39m
+          [33mclass[39m=[32m"app-nav p-6 flex justify-between items-center pointer-events-auto"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"AtomicViz home"[39m
+            [33mclass[39m=[32m"flex items-center gap-2 text-white cursor-pointer"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-atom w-8 h-8 text-cyan-400"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"1"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold tracking-wider"[39m
+            [36m>[39m
+              [0mATOMIC[0m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-cyan-400"[39m
+              [36m>[39m
+                [0mVIZ[0m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-1 bg-white/5 backdrop-blur-md p-1 rounded-full border border-white/10"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"true"[39m
+              [33mclass[39m=[32m"px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 bg-cyan-500 text-black"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-atom"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"15"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"15"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"12"[39m
+                  [33mcy[39m=[32m"12"[39m
+                  [33mr[39m=[32m"1"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mAtom[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"false"[39m
+              [33mclass[39m=[32m"px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 text-white hover:bg-white/10"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-flask-conical"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"15"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"15"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6.453 15h11.094"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8.5 2h7"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mReactions[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-pressed[39m=[32m"false"[39m
+              [33mclass[39m=[32m"px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 text-white hover:bg-white/10"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-hexagon"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"15"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+             ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/launchReadiness.test.jsx:51:31
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+ReferenceError: PointerEvent is not defined
+ ❯ firePointerEvent node_modules/motion-dom/dist/es/gestures/press/utils/keyboard.mjs:14:30
+ ❯ node_modules/motion-dom/dist/es/gestures/press/utils/keyboard.mjs:23:9
+ ❯ HTMLButtonElement.<anonymous> node_modules/motion-dom/dist/es/gestures/press/utils/keyboard.mjs:10:9
+ ❯ HTMLButtonElement.callTheUserObjectsOperation node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30
+ ❯ innerInvokeEventListeners node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25
+ ❯ invokeEventListeners node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3
+ ❯ HTMLButtonElementImpl._dispatch node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9
+ ❯ HTMLButtonElementImpl.dispatchEvent node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17
+ ❯ HTMLButtonElement.dispatchEvent node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34
+ ❯ node_modules/@testing-library/user-event/dist/esm/event/dispatchEvent.js:43:33
+
+This error originated in "src/components/__tests__/launchReadiness.test.jsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The last test to run before this error was "gold link selects iron via keyboard and refresh state derives from URL". This means either:
+- the error was thrown while Vitest was running this test, or
+- the error was thrown after the test completed, and this was the most recent test at that point.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 3 passed (7)
+     Errors  1 error
+   Start at  18:18:36
+   Duration  17.72s (tests 91%, import 5%, environment 2%, transform 2%)
+

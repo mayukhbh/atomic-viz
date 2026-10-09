@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, Share2 } from 'lucide-react';
 import { shareAtom } from './shareAtom';
+import { useSettings } from '../../context/useSettings';
 import { withElementParam } from '../../engine/deepLink';
 
 const SHARE_STATUS = {
@@ -10,6 +11,7 @@ const SHARE_STATUS = {
 };
 
 export function AtomInfo({ activeElementData, complexity, getDescription, showPeriodicTable, setShowPeriodicTable }) {
+  const { orbitalMode } = useSettings();
   const [shareStatus, setShareStatus] = useState(null);
   const timer = useRef(null);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -52,7 +54,7 @@ export function AtomInfo({ activeElementData, complexity, getDescription, showPe
                 <div className="flex items-center gap-3 text-xs text-cyan-100/60 font-light mt-2 flex-wrap">
                   {activeElementData.electronConfiguration && (
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                      Config: <span className="text-white font-mono">{activeElementData.electronConfiguration}</span>
+                      {activeElementData.atomicNumber >= 104 ? 'Predicted config: ' : 'Config: '}<span className="text-white font-mono">{activeElementData.electronConfiguration}</span>
                     </span>
                   )}
                   {activeElementData.electronegativity && (
@@ -63,9 +65,14 @@ export function AtomInfo({ activeElementData, complexity, getDescription, showPe
                 </div>
               )}
 
+              {activeElementData.atomicNumber >= 104 && <p className="mt-2 text-xs text-white/60">Superheavy-element shell counts use predicted configurations; theoretical assignments can differ.</p>}
+
               <div className="mt-4 text-white/60 max-w-md text-sm leading-relaxed">
                 {getDescription(activeElementData.description)}
               </div>
+              <p className="mt-2 text-xs text-white/60">{orbitalMode === 'quantum'
+                ? 'Stylized orbital illustration, not calculated probability density. Noble-gas core orbitals are omitted; lobe opacity and grouping do not show electron spin or orbital occupancy.'
+                : 'Bohr shell illustration, not physical electron paths. Sizes, distances and speeds are not to scale.'}</p>
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
