@@ -13,6 +13,10 @@ const ReactionLab = lazy(() => import('./features/reaction-lab/ReactionLab').the
 import { SettingsProvider } from './context/SettingsContext';
 import { useSettings } from './context/useSettings';
 import { AtomInfo } from './features/atom-explorer/AtomInfo';
+import { useElementDeepLink } from './features/atom-explorer/useElementDeepLink';
+import { bohrOuterRadius } from './engine/atomFraming';
+
+const ATOM_SCALE = 1.5;
 import { ExperienceBoundary } from './components/common/ExperienceBoundary';
 import { SceneExportProvider } from './features/export/SceneExportProvider';
 import { AnimatePresence } from 'framer-motion';
@@ -41,7 +45,7 @@ function AppContent() {
   } = useSettings();
 
   const [viewMode, setViewMode] = useState('atom'); // atom | reaction | organic | builder | sandbox
-  const [activeElement, setActiveElement] = useState('C');
+  const [activeElement, setActiveElement] = useElementDeepLink();
   const [reactionRequest, setReactionRequest] = useState(null);
   const [reactionSession, setReactionSession] = useState(null);
   const [showPeriodicTable, setShowPeriodicTable] = useState(false);
@@ -56,7 +60,7 @@ function AppContent() {
     if (step.orbitalMode) setOrbitalMode(step.orbitalMode);
     setShowPeriodicTable(!!step.showPeriodicTable);
     if (step.reactionId) setReactionRequest({ ...step, key: `${step.reactionId}-${step.stage ?? 0}` });
-  }, [setOrbitalMode]);
+  }, [setOrbitalMode, setActiveElement]);
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100dvh', overflow: 'hidden', background: '#04060a' }}>
@@ -72,8 +76,8 @@ function AppContent() {
         ) : viewMode === 'reaction' ? (
           <ReactionLab key={reactionRequest?.key} request={reactionRequest} session={reactionSession} onSaveSession={setReactionSession} />
         ) : (
-          <Scene>
-            <Atom element={activeElement} showElectrons scale={1.5} orbitalMode={orbitalMode} />
+          <Scene fitRadius={bohrOuterRadius(activeElementData) * ATOM_SCALE}>
+            <Atom element={activeElement} showElectrons scale={ATOM_SCALE} orbitalMode={orbitalMode} />
           </Scene>
         )}
       </Suspense></ExperienceBoundary>
@@ -105,6 +109,7 @@ function AppContent() {
                   : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10'
               }`}
               title={complexity === 'basic' ? 'Switch to University Level' : 'Switch to High School Level'}
+              aria-label={`Explanation level: ${complexity === 'basic' ? 'High School' : 'University'}. ${complexity === 'basic' ? 'Switch to University' : 'Switch to High School'}`}
             >
               <GraduationCap size={14} />
               {complexity === 'basic' ? 'High School' : 'University'}
@@ -119,6 +124,7 @@ function AppContent() {
                     : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10'
                 }`}
                 title={orbitalMode === 'bohr' ? 'Switch to Quantum Orbitals' : 'Switch to Bohr Model'}
+                aria-label={`Orbital model: ${orbitalMode === 'bohr' ? 'Bohr' : 'Quantum'}. ${orbitalMode === 'bohr' ? 'Switch to Quantum Orbitals' : 'Switch to Bohr Model'}`}
               >
                 <Orbit size={14} />
                 {orbitalMode === 'bohr' ? 'Bohr' : 'Quantum'}
@@ -138,6 +144,7 @@ function AppContent() {
             </button>
 
             <button
+              aria-expanded={showExportPanel}
               onClick={() => setShowExportPanel(!showExportPanel)}
               className={`px-3 py-2 rounded-full text-xs font-medium transition-all flex items-center gap-2 border ${
                 showExportPanel

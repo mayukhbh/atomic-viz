@@ -21,7 +21,7 @@ export function interpolateReaction(reaction, p) {
   if (stages.length === 1) {
     return {
       atoms: stages[0].atoms.map((a) => ({
-        id: a.id, element: a.element, position: a.position,
+        id: a.id, element: a.element, label: a.label, color: a.color, position: a.position,
         opacity: a.hidden ? 0 : 1, scale: a.hidden ? 0 : 1,
       })),
       bonds: stages[0].bonds.map((b) => ({ ...b, opacity: 1 })),
@@ -48,9 +48,13 @@ export function interpolateReaction(reaction, p) {
     const fromHidden = a.hidden ? 0 : 1;
     const toHidden = b.hidden ? 0 : 1;
     const vis = lerp(fromHidden, toHidden, t);
+    const shown = b.hidden && !a.hidden ? a : b;
     return {
       id: a.id,
-      element: b.hidden && !a.hidden ? a.element : b.element,
+      element: shown.element,
+      // Optional display overrides for particles drawn with a stand-in element (n, e⁻, ²H).
+      label: shown.label,
+      color: shown.color,
       position: lerp3(a.position, b.position, t),
       opacity: vis,
       scale: vis,

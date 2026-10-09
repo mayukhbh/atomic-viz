@@ -604,7 +604,7 @@ export const REACTIONS = [
     domain: 'nuclear',
     level: 'advanced',
     equation: 'n + ²³⁵U → ¹⁴¹Ba + ⁹²Kr + 3n',
-    enthalpy: -200000000, // ~200 MeV per fission
+    energyNote: 'Energy released: approximately 200 MeV per fission (varies by products).',
     description: {
       basic: "A neutron splits a uranium atom into smaller atoms, releasing enormous energy and more neutrons.",
       advanced: "Thermal neutron capture excites ²³⁵U to ²³⁶U*, which undergoes fission via nuclear deformation. The mass defect (Δm ≈ 0.2 amu) converts to ~200 MeV via E=mc². The 2.5 neutrons released enable chain reactions."
@@ -613,36 +613,36 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0] },
-          { id: 'n_in', element: 'H', position: [-5, 0, 0] },
-          { id: 'ba', element: 'Fe', position: [0, 0, 0], hidden: true },
-          { id: 'kr', element: 'Ar', position: [0, 0, 0], hidden: true },
-          { id: 'n1', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n2', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n3', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [-5, 0, 0] },
+          { id: 'ba', element: 'Ba', position: [0, 0, 0], hidden: true },
+          { id: 'kr', element: 'Kr', position: [0, 0, 0], hidden: true },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0] },
-          { id: 'n_in', element: 'H', position: [-0.8, 0, 0] },
-          { id: 'ba', element: 'Fe', position: [0, 0, 0], hidden: true },
-          { id: 'kr', element: 'Ar', position: [0, 0, 0], hidden: true },
-          { id: 'n1', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n2', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'n3', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [-0.8, 0, 0] },
+          { id: 'ba', element: 'Ba', position: [0, 0, 0], hidden: true },
+          { id: 'kr', element: 'Kr', position: [0, 0, 0], hidden: true },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
           { id: 'u1', element: 'U', position: [0, 0, 0], hidden: true },
-          { id: 'n_in', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 'ba', element: 'Fe', position: [-2, 2, 0], hidden: false },
-          { id: 'kr', element: 'Ar', position: [2, -2, 0], hidden: false },
-          { id: 'n1', element: 'H', position: [3, 3, 0], hidden: false },
-          { id: 'n2', element: 'H', position: [3, 0, 0], hidden: false },
-          { id: 'n3', element: 'H', position: [0, 3, 0], hidden: false }
+          { id: 'n_in', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true },
+          { id: 'ba', element: 'Ba', position: [-2, 2, 0], hidden: false },
+          { id: 'kr', element: 'Kr', position: [2, -2, 0], hidden: false },
+          { id: 'n1', element: 'H', label: 'n', color: '#9ca3af', position: [3, 3, 0], hidden: false },
+          { id: 'n2', element: 'H', label: 'n', color: '#9ca3af', position: [3, 0, 0], hidden: false },
+          { id: 'n3', element: 'H', label: 'n', color: '#9ca3af', position: [0, 3, 0], hidden: false }
         ],
         bonds: []
       }
@@ -655,7 +655,7 @@ export const REACTIONS = [
     domain: 'nuclear',
     level: 'advanced',
     equation: '²H + ³H → ⁴He + n',
-    enthalpy: -17600000, // ~17.6 MeV
+    energyNote: 'Energy released: approximately 17.6 MeV per event.',
     description: {
       basic: "Two heavy hydrogen isotopes fuse to create helium and release tremendous energy - this powers the Sun.",
       advanced: "D-T fusion has the lowest ignition temperature (~100 million K) due to strong nuclear force range. The reaction produces 17.6 MeV, with 14.1 MeV carried by the neutron. This is the basis for tokamak fusion reactors."
@@ -663,28 +663,28 @@ export const REACTIONS = [
     stages: [
       {
         atoms: [
-          { id: 'd', element: 'H', position: [-2, 0, 0] },
-          { id: 't', element: 'H', position: [2, 0, 0] },
+          { id: 'd', element: 'H', label: '²H', position: [-2, 0, 0] },
+          { id: 't', element: 'H', label: '³H', position: [2, 0, 0] },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true },
-          { id: 'n', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
-          { id: 'd', element: 'H', position: [-0.3, 0, 0] },
-          { id: 't', element: 'H', position: [0.3, 0, 0] },
+          { id: 'd', element: 'H', label: '²H', position: [-0.3, 0, 0] },
+          { id: 't', element: 'H', label: '³H', position: [0.3, 0, 0] },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true },
-          { id: 'n', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
       {
         atoms: [
-          { id: 'd', element: 'H', position: [0, 0, 0], hidden: true },
-          { id: 't', element: 'H', position: [0, 0, 0], hidden: true },
+          { id: 'd', element: 'H', label: '²H', position: [0, 0, 0], hidden: true },
+          { id: 't', element: 'H', label: '³H', position: [0, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [-1.5, 0, 0], hidden: false },
-          { id: 'n', element: 'H', position: [3, 0, 0], hidden: false }
+          { id: 'n', element: 'H', label: 'n', color: '#9ca3af', position: [3, 0, 0], hidden: false }
         ],
         bonds: []
       }
@@ -697,7 +697,7 @@ export const REACTIONS = [
     domain: 'nuclear',
     level: 'advanced',
     equation: '²³⁸U → ²³⁴Th + ⁴He',
-    enthalpy: -4200000, // ~4.2 MeV
+    energyNote: 'Alpha-particle kinetic energy: approximately 4.2 MeV (daughter recoil carries additional energy).',
     description: {
       basic: "Uranium spontaneously emits an alpha particle (helium nucleus) and transforms into thorium.",
       advanced: "Alpha decay occurs via quantum tunneling through the Coulomb barrier. The Geiger-Nuttall law relates half-life to alpha energy. ²³⁸U's t½ of 4.5 billion years makes it useful for geological dating."
@@ -706,7 +706,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0] },
-          { id: 'th', element: 'Fe', position: [0, 0, 0], hidden: true },
+          { id: 'th', element: 'Th', position: [0, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
@@ -714,7 +714,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0] },
-          { id: 'th', element: 'Fe', position: [-0.5, 0, 0], hidden: true },
+          { id: 'th', element: 'Th', position: [-0.5, 0, 0], hidden: true },
           { id: 'he', element: 'He', position: [1, 0, 0], hidden: true }
         ],
         bonds: []
@@ -722,7 +722,7 @@ export const REACTIONS = [
       {
         atoms: [
           { id: 'u', element: 'U', position: [0, 0, 0], hidden: true },
-          { id: 'th', element: 'Fe', position: [-1.5, 0, 0], hidden: false },
+          { id: 'th', element: 'Th', position: [-1.5, 0, 0], hidden: false },
           { id: 'he', element: 'He', position: [3, 0, 0], hidden: false }
         ],
         bonds: []
@@ -736,7 +736,7 @@ export const REACTIONS = [
     domain: 'nuclear',
     level: 'advanced',
     equation: '¹⁴C → ¹⁴N + e⁻ + ν̄',
-    enthalpy: -156000, // ~156 keV
+    energyNote: 'Decay energy: approximately 0.156 MeV, shared by the electron, antineutrino and recoil.',
     description: {
       basic: "Radioactive carbon transforms into nitrogen by emitting an electron, used for dating ancient materials.",
       advanced: "In β⁻ decay, a neutron converts to a proton via weak interaction: n → p + e⁻ + ν̄e. ¹⁴C's t½ of 5,730 years and production in the upper atmosphere enables radiocarbon dating of organic materials up to ~50,000 years old."
@@ -746,7 +746,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [0, 0, 0] },
           { id: 'n', element: 'N', position: [0, 0, 0], hidden: true },
-          { id: 'e', element: 'H', position: [0, 0, 0], hidden: true }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [0, 0, 0], hidden: true }
         ],
         bonds: []
       },
@@ -754,7 +754,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [-0.3, 0, 0] },
           { id: 'n', element: 'N', position: [0, 0, 0], hidden: true },
-          { id: 'e', element: 'H', position: [0.5, 0.5, 0], hidden: true }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [0.5, 0.5, 0], hidden: true }
         ],
         bonds: []
       },
@@ -762,7 +762,7 @@ export const REACTIONS = [
         atoms: [
           { id: 'c', element: 'C', position: [0, 0, 0], hidden: true },
           { id: 'n', element: 'N', position: [-1, 0, 0], hidden: false },
-          { id: 'e', element: 'H', position: [3, 1, 0], hidden: false }
+          { id: 'e', element: 'H', label: 'e⁻', color: '#60a5fa', position: [3, 1, 0], hidden: false }
         ],
         bonds: []
       }
@@ -777,7 +777,7 @@ export const REACTIONS = [
     domain: 'advanced',
     level: 'advanced',
     equation: 'Zn + Cu²⁺ → Zn²⁺ + Cu',
-    enthalpy: -212,
+    energyNote: 'Standard Gibbs free energy: ΔG° = −212 kJ/mol for the reaction as written (approximately, E° = 1.10 V).',
     description: {
       basic: "Zinc metal displaces copper from solution - the basis for batteries and metal plating.",
       advanced: "This galvanic cell has E°=1.10V. Zn is oxidized at the anode (Zn → Zn²⁺ + 2e⁻) while Cu²⁺ is reduced at the cathode (Cu²⁺ + 2e⁻ → Cu). The Daniell cell was one of the first practical batteries."
@@ -865,8 +865,8 @@ export const REACTIONS = [
     type: 'Chemical',
     domain: 'advanced',
     level: 'advanced',
-    equation: 'ADP + Pᵢ → ATP',
-    enthalpy: 30.5,
+    equation: 'ADP + Pᵢ → ATP + H₂O',
+    energyNote: 'Standard transformed Gibbs free energy: ΔG°′ = +30.5 kJ/mol at pH 7. Cellular values depend on conditions.',
     description: {
       basic: "ADP and phosphate combine to form ATP - the energy currency of all living cells.",
       advanced: "ATP synthase couples proton gradient dissipation to phosphorylation via rotary catalysis. The F₀ subunit acts as a proton channel; F₁ synthesizes ATP using conformational changes. ~3 H⁺ are needed per ATP."

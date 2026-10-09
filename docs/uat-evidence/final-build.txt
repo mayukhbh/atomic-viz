@@ -1,0 +1,36 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> atomic-viz-app@0.0.0 build
+> vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2663 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   1.11 kB │ gzip:   0.59 kB
+dist/.vite/manifest.json                          4.46 kB │ gzip:   0.82 kB
+dist/assets/InstrumentSans-Bold-CEAwMKe7.ttf     68.08 kB
+dist/assets/index-BOZ6E51W.css                   47.04 kB │ gzip:   8.61 kB
+dist/assets/play-DQW69r6i.js                      0.19 kB │ gzip:   0.18 kB
+dist/assets/rotate-ccw-7_wJ_368.js                0.20 kB │ gzip:   0.18 kB
+dist/assets/useDialog-B74OPP-N.js                 1.17 kB │ gzip:   0.62 kB
+dist/assets/cpk-C8ZWEhKD.js                       1.60 kB │ gzip:   0.56 kB
+dist/assets/PeriodicTable-DAjBqikY.js             3.92 kB │ gzip:   1.73 kB
+dist/assets/ExportPanel-JnEVqib3.js               4.21 kB │ gzip:   2.03 kB
+dist/assets/ViewerCanvas-sytAh4EO.js              5.42 kB │ gzip:   2.01 kB
+dist/assets/AtomBuilder-DcM7GJcN.js               9.29 kB │ gzip:   3.25 kB
+dist/assets/OrganicLab-D7t2Oc7I.js               11.18 kB │ gzip:   4.22 kB
+dist/assets/molecules-BhmkpWoh.js                12.49 kB │ gzip:   4.08 kB
+dist/assets/TutorialOverlay-C6EUIVJv.js          18.95 kB │ gzip:   5.90 kB
+dist/assets/MoleculeSandbox-DDcT0nQR.js          26.02 kB │ gzip:   8.77 kB
+dist/assets/GLTFExporter-Egz5yu7U.js             35.27 kB │ gzip:  10.53 kB
+dist/assets/ReactionLab-DpZYaG23.js              42.83 kB │ gzip:  11.95 kB
+dist/assets/proxy-BQna-sI2.js                   110.92 kB │ gzip:  36.48 kB
+dist/assets/index-DqkSoiYL.js                 1,448.40 kB │ gzip: 421.44 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.63s

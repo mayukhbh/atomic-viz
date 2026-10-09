@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> atomic-viz-app@0.0.0 test:run
+> vitest run
+
+
+ RUN  v5.0.0 /workspace/scratch/415a9af320da/atomic-viz
+
+
+ Test Files  7 passed (7)
+      Tests  111 passed (111)
+   Start at  18:26:33
+   Duration  18.16s (tests 79%, import 8%, environment 8%, transform 5%)
+

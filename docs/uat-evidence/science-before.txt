@@ -1,0 +1,47 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> atomic-viz-app@0.0.0 test:run
+> vitest run src/engine/__tests__/launchScience.test.js
+
+
+ RUN  v5.0.0 /workspace/scratch/415a9af320da/atomic-viz
+
+ ❯ src/engine/__tests__/launchScience.test.js (1 test | 1 failed) 17ms
+   × all 118 shell arrays agree with their declared configurations, including noble-gas cores 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/engine/__tests__/launchScience.test.js > all 118 shell arrays agree with their declared configurations, including noble-gas cores
+AssertionError: Ds: expected [ 2, 8, 18, 32, 32, 16, 2 ] to deeply equal [ 2, 8, 18, 32, 32, 17, 1 ]
+
+- Expected
++ Received
+
+@@ -2,8 +2,8 @@
+    2,
+    8,
+    18,
+    32,
+    32,
+-   17,
+-   1,
++   16,
++   2,
+  ]
+
+ ❯ src/engine/__tests__/launchScience.test.js:9:27
+      7|   const shells=[];
+      8|   for(const o of parseElectronConfiguration(expand(e.electronConfigura…
+      9|   expect(shells,e.symbol).toEqual(e.electrons);
+       |                           ^
+     10|  }
+     11| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  18:20:24
+   Duration  385ms (transform 61%, import 19%, tests 16%, worker 5%)
+

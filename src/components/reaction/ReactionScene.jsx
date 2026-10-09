@@ -12,7 +12,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 function ReactAtom({ atom }) {
   const ref = useRef();
   const el = ELEMENTS[atom.element];
-  const color = el?.color || cpk(atom.element).color;
+  const color = atom.color || el?.color || cpk(atom.element).color;
   const radius = (el?.radius || 0.5) * 0.6;
 
   useFrame(({ clock }) => {
@@ -41,9 +41,11 @@ function ReactAtom({ atom }) {
           envMapIntensity={0.8}
         />
       </mesh>
-      {atom.opacity > 0.6 && (
-        <Billboard position={[0, 0, radius + 0.08]}>
+      {/* Kept mounted and faded with the atom: toggling mount at a threshold made
+          labels pop in a frame late while troika laid the text out. */}
+      <Billboard>
           <Label3D
+            position={[0, 0, radius + 0.08]}
             fontSize={0.24}
             color="#ffffff"
             anchorX="center"
@@ -51,11 +53,11 @@ function ReactAtom({ atom }) {
             outlineWidth={0.02}
             outlineColor="#000000"
             fillOpacity={atom.opacity}
+            outlineOpacity={atom.opacity}
           >
-            {el?.symbol || atom.element}
+            {atom.label || el?.symbol || atom.element}
           </Label3D>
-        </Billboard>
-      )}
+      </Billboard>
     </group>
   );
 }
@@ -154,14 +156,14 @@ export function ReactionScene({ reaction, progress }) {
         <ReactAtom key={a.id} atom={a} />
       ))}
 
-      {bonds.map((b, i) => {
+      {bonds.map((b) => {
         const s = posById.get(b.start);
         const e = posById.get(b.end);
         if (!s || !e) return null;
         const op = Math.min(b.opacity, s.opacity, e.opacity);
         return (
           <ReactBond
-            key={`${b.start}-${b.end}-${i}`}
+            key={[b.start, b.end].sort().join('::')}
             start={s.position}
             end={e.position}
             type={b.type || 'single'}

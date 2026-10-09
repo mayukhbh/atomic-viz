@@ -76,8 +76,11 @@ export const AtomBuilder = () => {
         return e;
     }, [particles.electrons]);
 
+    // Beyond these counts the scene stops being a meaningful illustration (no element
+    // past Z=118) and each particle is another animated mesh, so cap rapid clicking.
+    const LIMITS = { protons: 118, neutrons: 180, electrons: 118 };
     const addParticle = (type) => {
-        setParticles(prev => ({ ...prev, [type]: prev[type] + 1 }));
+        setParticles(prev => ({ ...prev, [type]: Math.min(LIMITS[type], prev[type] + 1) }));
         setShowResult(false);
     };
 
@@ -90,22 +93,22 @@ export const AtomBuilder = () => {
     return (
         <div className="w-full h-full relative bg-black">
             {/* UI Controls */}
-            <div className="absolute top-32 left-4 z-10 bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white shadow-2xl w-80">
+            <div className="builder-controls absolute top-32 left-4 z-10 bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white shadow-2xl w-80">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                     <div className="w-2 h-8 bg-cyan-500 rounded-full"></div>
                     Atom Builder
                 </h2>
 
                 <div className="space-y-3 mb-6">
-                    <button onClick={() => addParticle('protons')} className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition group">
+                    <button onClick={() => addParticle('protons')} disabled={particles.protons >= LIMITS.protons} aria-label={`Add proton (charge +1)`} title="Charge +1" className="disabled:opacity-40 w-full flex items-center justify-between px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition group">
                         <span className="font-medium text-red-200">Proton</span>
                         <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full group-hover:scale-110 transition">+1</span>
                     </button>
-                    <button onClick={() => addParticle('neutrons')} className="w-full flex items-center justify-between px-4 py-3 bg-gray-500/10 hover:bg-gray-500/20 border border-gray-500/30 rounded-xl transition group">
+                    <button onClick={() => addParticle('neutrons')} disabled={particles.neutrons >= LIMITS.neutrons} aria-label={`Add neutron (charge 0)`} title="Charge 0" className="disabled:opacity-40 w-full flex items-center justify-between px-4 py-3 bg-gray-500/10 hover:bg-gray-500/20 border border-gray-500/30 rounded-xl transition group">
                         <span className="font-medium text-gray-200">Neutron</span>
                         <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full group-hover:scale-110 transition">0</span>
                     </button>
-                    <button onClick={() => addParticle('electrons')} className="w-full flex items-center justify-between px-4 py-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-xl transition group">
+                    <button onClick={() => addParticle('electrons')} disabled={particles.electrons >= LIMITS.electrons} aria-label={`Add electron (charge -1)`} title="Charge -1" className="disabled:opacity-40 w-full flex items-center justify-between px-4 py-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-xl transition group">
                         <span className="font-medium text-blue-200">Electron</span>
                         <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full group-hover:scale-110 transition">-1</span>
                     </button>
@@ -118,7 +121,7 @@ export const AtomBuilder = () => {
             </div>
 
             {/* Stats Panel */}
-            <div className="absolute top-32 right-4 z-10 bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white w-80 shadow-2xl">
+            <div className="builder-stats absolute top-32 right-4 z-10 max-h-[calc(100dvh-9rem)] overflow-y-auto bg-black/60 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-white w-80 shadow-2xl">
                 <div className="text-center mb-6">
                     <div className="text-6xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50">
                         {element ? element.symbol : '?'}
@@ -168,6 +171,12 @@ export const AtomBuilder = () => {
                     </button>
                 )}
             </div>
+
+            {particles.protons + particles.neutrons + particles.electrons === 0 && (
+                <p className="builder-hint absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-xs text-center text-sm text-white/60 pointer-events-none">
+                    Add protons to choose an element, neutrons to change the isotope, and electrons to set the charge.
+                </p>
+            )}
 
             <Canvas camera={{ position: [0, 0, 10], fov: 45 }}>
                 <color attach="background" args={['#050505']} />

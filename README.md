@@ -33,5 +33,6 @@ These are educational illustrations, not quantum chemistry or isotope-stability 
 - [Performance measurements](docs/PERFORMANCE.md)
 - [Contributing](docs/CONTRIBUTING.md)
 - [Cleanup report and remaining verification](docs/CLEANUP_REPORT.md)
+- [Final review](ATOMIC_VIZ_REVIEW.md), [performance audit](PERFORMANCE_AUDIT.md) and [polish backlog](POLISH_BACKLOG.md)
 
 The separate `remotion` project contains video-production source and its own dependencies. Generated videos are ignored. Existing agent-tool adapters are retained as development tooling.

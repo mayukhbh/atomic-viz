@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useDialog } from './common/useDialog';
 import { useSettings } from '../context/useSettings';
+import { CATEGORY_ORDER, categoryColor } from '../data/categories';
+
+const hexA = (hex, alpha) => `${hex}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
 
 export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
     const elementsList = Object.values(ELEMENTS);
@@ -34,42 +37,54 @@ export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
                     <X className="w-6 h-6 text-white/60" />
                 </button>
 
-                <h2 className="text-3xl font-bold mb-8 text-center tracking-[0.2em] text-white/80">PERIODIC TABLE OF ELEMENTS</h2>
+                <h2 className="text-xl md:text-3xl font-bold mb-4 text-center tracking-[0.2em] text-white/80">PERIODIC TABLE OF ELEMENTS</h2>
 
-                <div className="grid grid-cols-18 gap-2 mb-8 min-w-[900px]" style={{ gridTemplateColumns: 'repeat(18, minmax(0, 1fr))' }}>
-                    {elementsList.map((el) => (
+                {/* Legend: derived from the same map that colours the tiles, so it always matches. */}
+                <ul aria-label="Element categories" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-white/60 mb-6">
+                    {CATEGORY_ORDER.map(cat => (
+                        <li key={cat} className="flex items-center gap-2">
+                            <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: categoryColor(cat) }} />
+                            {cat}
+                        </li>
+                    ))}
+                </ul>
+
+                <div className="grid grid-cols-18 gap-1.5 mb-6 min-w-[900px]" style={{ gridTemplateColumns: 'repeat(18, minmax(0, 1fr))' }}>
+                    {elementsList.map((el) => {
+                        const active = activeElement === el.symbol;
+                        const tint = categoryColor(el.category);
+                        return (
                         <motion.button
                             key={el.symbol}
-                            aria-label={`${el.name}, ${el.symbol}, atomic number ${el.atomicNumber}`}
-                            aria-pressed={activeElement === el.symbol}
-                            whileHover={{ scale: 1.1, zIndex: 10, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                            aria-label={`${el.name}, ${el.symbol}, atomic number ${el.atomicNumber}, ${el.category}`}
+                            aria-pressed={active}
+                            title={`${el.name} · ${el.category}`}
+                            whileHover={{ scale: 1.08, zIndex: 10 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => onSelect(el.symbol)}
                             style={{
                                 gridColumn: el.xpos,
                                 gridRow: el.ypos,
-                                borderColor: activeElement === el.symbol ? el.color : 'rgba(255,255,255,0.1)',
-                                backgroundColor: activeElement === el.symbol ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)'
+                                borderColor: active ? '#ffffff' : hexA(tint, 0.35),
+                                backgroundColor: hexA(tint, active ? 0.28 : 0.1),
                             }}
-                            className={`
-                                aspect-[0.85] rounded-lg border flex flex-col items-center justify-center transition-colors relative group
-                                ${activeElement === el.symbol ? 'shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'hover:border-white/40'}
-                            `}
+                            className={`aspect-[0.85] rounded-lg border flex flex-col items-center justify-center transition-colors relative ${active ? 'shadow-[0_0_20px_rgba(255,255,255,0.25)]' : 'hover:brightness-150'}`}
                         >
-                            <span className="text-[0.6rem] text-white/40 absolute top-1 left-1">{el.atomicNumber}</span>
-                            <span className="text-lg sm:text-xl font-bold" style={{ color: el.color }}>{el.symbol}</span>
+                            <span className="text-[0.6rem] text-white/50 absolute top-1 left-1">{el.atomicNumber}</span>
+                            <span className="text-lg sm:text-xl font-bold" style={{ color: tint }}>{el.symbol}</span>
                             <span className="text-[0.5rem] sm:text-[0.6rem] text-white/60 truncate w-full text-center px-1 hidden sm:block">{el.name}</span>
                         </motion.button>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Legend & Description Panel */}
-                <div className="flex flex-col md:flex-row gap-8 items-end justify-between mt-4">
+                <div className="flex flex-col md:flex-row gap-8 items-end justify-between mt-2">
 
                     {/* Description Panel (Bottom Left) */}
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-xl w-full backdrop-blur-md">
                         <div className="flex items-center gap-4 mb-2">
-                            <h3 className="text-3xl font-bold" style={{ color: activeData.color }}>{activeData.name}</h3>
+                            <h3 className="text-3xl font-bold" style={{ color: categoryColor(activeData.category) }}>{activeData.name}</h3>
                             <span className="text-xl text-white/40 font-light">{activeData.category}</span>
                         </div>
                         <p className="text-lg text-gray-300 leading-relaxed">
@@ -83,24 +98,6 @@ export const PeriodicTable = ({ onSelect, activeElement, onClose }) => {
                         </div>
                     </div>
 
-                    {/* Legend */}
-                    <div className="flex flex-wrap justify-end gap-x-6 gap-y-2 text-xs text-gray-400 max-w-md">
-                        {[
-                            { color: '#D9FFFF', label: 'Noble Gas' },
-                            { color: '#CC80FF', label: 'Alkali Metal' },
-                            { color: '#C2FF00', label: 'Alkaline Earth' },
-                            { color: '#E06633', label: 'Transition Metal' },
-                            { color: '#1FF01F', label: 'Halogen' },
-                            { color: '#3050F8', label: 'Nonmetal' },
-                            { color: '#F0C8A0', label: 'Metalloid' },
-                            { color: '#BFA6A6', label: 'Post-transition' },
-                        ].map(cat => (
-                            <div key={cat.label} className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }}></div>
-                                <span>{cat.label}</span>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </motion.div>
         </div>

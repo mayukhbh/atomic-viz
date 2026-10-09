@@ -22,7 +22,8 @@ export function OrganicLab() {
   const [mode, setMode] = useState('ballstick');
   const [showLabels, setShowLabels] = useState(true);
   const [highlightFG, setHighlightFG] = useState(true);
-  const [autoRotate, setAutoRotate] = useState(true);
+  // Respect the OS reduced-motion preference for the default; users can still turn it on.
+  const [autoRotate, setAutoRotate] = useState(() => !(typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches));
 
   const list = grouped[activeClass] || [];
   const active = list.find((m) => m.id === activeId) || list[0];
@@ -56,7 +57,7 @@ export function OrganicLab() {
       </div>
 
       {/* Left: class + molecule library */}
-      <div className="absolute top-28 left-6 bottom-6 w-72 pointer-events-auto flex flex-col gap-3 z-10">
+      <div className="organic-library absolute top-28 left-6 bottom-6 w-72 pointer-events-auto flex flex-col gap-3 z-10">
         <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
           <div className="flex items-center gap-2 mb-3 text-emerald-300">
             <Sparkles size={16} />
@@ -69,6 +70,7 @@ export function OrganicLab() {
               return (
                 <button
                   key={c}
+                  aria-pressed={on}
                   onClick={() => selectClass(c)}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all ${
                     on ? 'text-black border-transparent' : 'text-white/70 border-white/10 hover:bg-white/10'
@@ -99,6 +101,7 @@ export function OrganicLab() {
               return (
                 <button
                   key={m.id}
+                  aria-pressed={on}
                   onClick={() => setActiveId(m.id)}
                   className={`text-left px-3 py-2 rounded-xl border transition-all ${
                     on
@@ -118,7 +121,7 @@ export function OrganicLab() {
       </div>
 
       {/* Right: render controls */}
-      <div className="absolute top-28 right-6 pointer-events-auto flex flex-col gap-3 z-10 w-56">
+      <div className="organic-controls absolute top-28 right-6 pointer-events-auto flex flex-col gap-3 z-10 w-56">
         <div className="bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
           <span className="text-xs uppercase tracking-wider text-white/40">Render mode</span>
           <div className="mt-2 flex flex-col gap-1.5">
@@ -128,6 +131,7 @@ export function OrganicLab() {
               return (
                 <button
                   key={mo.id}
+                  aria-pressed={on}
                   onClick={() => setMode(mo.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all ${
                     on ? 'bg-emerald-500 text-black font-semibold' : 'text-white/70 hover:bg-white/10'
@@ -156,11 +160,11 @@ export function OrganicLab() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto z-10 w-[min(90vw,520px)]"
+            className="organic-info absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto z-10 w-[min(90vw,520px)]"
           >
             <div className="bg-black/55 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-2xl text-center">
               <div className="flex items-center justify-center gap-3">
-                <h1 className="text-2xl font-bold text-white">{active.name}</h1>
+                <h2 className="text-2xl font-bold text-white">{active.name}</h2>
                 <span
                   className="font-mono text-lg px-2 py-0.5 rounded-lg"
                   style={{ background: `${classInfo.color}22`, color: classInfo.color }}
