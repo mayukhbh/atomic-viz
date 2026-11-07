@@ -3,6 +3,12 @@ import { track } from '../../engine/analytics';
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
+export function elementShareUrl(href, symbol) {
+  const url = new URL(withElementParam(href, symbol));
+  url.pathname = `/share/${symbol}.html`;
+  return url.toString();
+}
+
 /** Share copy built from element data only. */
 export function shareMessage(element) {
   const shells = element.electrons?.length || 0;
@@ -15,7 +21,7 @@ export function shareMessage(element) {
  * Resolves to 'shared' | 'cancelled' | 'copied' | 'failed' and never throws.
  */
 export async function shareAtom(element, { nav = globalThis.navigator, href = globalThis.location?.href } = {}) {
-  const url = withElementParam(href, element.symbol);
+  const url = elementShareUrl(href, element.symbol);
   const text = shareMessage(element);
   const data = { title: `${element.name} · AtomicViz`, text, url };
   const canNativeShare = typeof nav?.share === 'function' && (typeof nav.canShare !== 'function' || nav.canShare(data));
