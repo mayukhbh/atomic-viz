@@ -25,10 +25,10 @@ function FrameProbe({report}){
  useFrame((_,delta)=>{const sample=sampleRef.current;sample.frames++;sample.total+=delta;if(sample.frames===120){report(`Mean frame: ${(sample.total*1000/120).toFixed(1)} ms`);sample.frames=0;sample.total=0;}});
  return null;
 }
-export function SafeCanvas({children,gl,...props}){
+export function SafeCanvas({children,gl,dpr = [1,2],...props}){
  const targetRef=useSceneExport(),[lost,setLost]=useState(false),[metrics,setMetrics]=useState(''),[frames,setFrames]=useState('');
  const profile=import.meta.env.DEV&&new URLSearchParams(window.location.search).has('profile');
- return <ExperienceBoundary><Canvas {...props} dpr={[1,2]} gl={{...gl,preserveDrawingBuffer:true}} fallback={<div role="alert" className="p-8 text-white">3D requires WebGL. Try a browser with hardware acceleration; navigation and element information remain available.</div>}>
+ return <ExperienceBoundary><Canvas {...props} dpr={dpr} gl={{...gl,preserveDrawingBuffer:true}} fallback={<div role="alert" className="p-8 text-white">3D requires WebGL. Try a browser with hardware acceleration; navigation and element information remain available.</div>}>
  {targetRef&&<SceneBridge targetRef={targetRef} onLost={setLost} onMetrics={setMetrics} profile={profile}/>}{profile&&<FrameProbe report={setFrames}/>}{children}
  </Canvas>{lost&&<div role="alert" className="absolute inset-x-8 top-40 bg-slate-950 p-6 text-white">The graphics context was lost. Wait for recovery or <button onClick={()=>window.location.reload()} className="underline">reload this view</button>.</div>}{profile&&<div role="status" className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-black/90 p-2 text-xs text-white">{frames} · {metrics}</div>}</ExperienceBoundary>;
 }

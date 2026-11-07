@@ -10,6 +10,22 @@ import {
   getOrbitalColor,
 } from '../../utils/orbitalGeometry';
 
+function PulsingLobes({ children }) {
+  const ref = useRef();
+  const meshes = useRef([]);
+  React.useLayoutEffect(() => {
+    meshes.current = [];
+    ref.current.traverse(object => {
+      if (object.isMesh && object.userData.pulseScale !== undefined) meshes.current.push(object);
+    });
+  }, [children]);
+  useFrame(({ clock }) => {
+    const pulse = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.05;
+    for (const mesh of meshes.current) mesh.scale.setScalar(mesh.userData.pulseScale * pulse);
+  });
+  return <group ref={ref}>{children}</group>;
+}
+
 /**
  * Single orbital lobe component
  */
@@ -21,19 +37,9 @@ const OrbitalLobe = ({
   opacity = 0.4,
   type = 'lobe'
 }) => {
-  const meshRef = useRef();
-
-  useFrame(({ clock }) => {
-    if (meshRef.current) {
-      // Subtle pulsing effect
-      const pulse = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.05;
-      meshRef.current.scale.setScalar(scale * pulse);
-    }
-  });
-
   if (type === 'torus') {
     return (
-      <mesh position={position} rotation={rotation} ref={meshRef}>
+      <mesh position={position} rotation={rotation} scale={scale} userData={{ pulseScale: scale }}>
         <torusGeometry args={[0.8, 0.2, 16, 32]} />
         <meshPhysicalMaterial
           color={color}
@@ -48,8 +54,8 @@ const OrbitalLobe = ({
   }
 
   return (
-    <mesh position={position} rotation={rotation} ref={meshRef}>
-      <sphereGeometry args={[0.4, 24, 24]} />
+    <mesh position={position} rotation={rotation} scale={scale} userData={{ pulseScale: scale }}>
+      <sphereGeometry args={[0.4, 16, 16]} />
       <meshPhysicalMaterial
         color={color}
         transparent
@@ -101,7 +107,7 @@ const POrbital = ({ radius = 1, color = '#22C55E', opacity = 0.35, electrons = 6
   const axes = ['x', 'y', 'z'];
 
   return (
-    <group>
+    <PulsingLobes>
       {axes.map((axis, index) => {
         const orbital = generatePOrbital(axis, 0.4, radius * 1.2);
         const activeElectrons = Math.min(2, Math.max(0, electrons - index * 2));
@@ -126,7 +132,7 @@ const POrbital = ({ radius = 1, color = '#22C55E', opacity = 0.35, electrons = 6
           </group>
         );
       })}
-    </group>
+    </PulsingLobes>
   );
 };
 
@@ -137,7 +143,7 @@ const DOrbital = ({ radius = 1.2, color = '#F97316', opacity = 0.3, electrons = 
   const types = ['xy', 'xz', 'yz', 'x2-y2', 'z2'];
 
   return (
-    <group>
+    <PulsingLobes>
       {types.map((type, index) => {
         const lobes = generateDOrbital(type, 0.35);
         const activeElectrons = Math.min(2, Math.max(0, electrons - index * 2));
@@ -161,7 +167,7 @@ const DOrbital = ({ radius = 1.2, color = '#F97316', opacity = 0.3, electrons = 
           </group>
         );
       })}
-    </group>
+    </PulsingLobes>
   );
 };
 
@@ -172,7 +178,7 @@ const FOrbital = ({ radius = 1.4, color = '#A855F7', opacity = 0.25, electrons =
   const types = ['xyz', 'z3', 'default1', 'default2', 'default3', 'default4', 'default5'];
 
   return (
-    <group>
+    <PulsingLobes>
       {types.slice(0, Math.ceil(electrons / 2)).map((type, index) => {
         const lobes = generateFOrbital(type, 0.3);
         const activeElectrons = Math.min(2, Math.max(0, electrons - index * 2));
@@ -196,7 +202,7 @@ const FOrbital = ({ radius = 1.4, color = '#A855F7', opacity = 0.25, electrons =
           </group>
         );
       })}
-    </group>
+    </PulsingLobes>
   );
 };
 

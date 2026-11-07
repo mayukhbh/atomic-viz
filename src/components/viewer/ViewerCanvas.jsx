@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeCanvas as Canvas } from './SafeCanvas';
-import { OrbitControls, ContactShadows, AdaptiveDpr } from '@react-three/drei';
+import { OrbitControls, ContactShadows, PerformanceMonitor } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { StudioEnvironment } from './StudioEnvironment';
 
@@ -16,14 +16,15 @@ export function ViewerCanvas({
   bloom = 0.7,
   background = 'radial-gradient(circle at 50% 35%, #101826 0%, #070a12 60%, #04060a 100%)',
 }) {
+  const [quality, setQuality] = useState(2);
   return (
     <Canvas
       camera={{ position: cameraPosition, fov }}
-      dpr={[1, 2]}
+      dpr={[1, quality === 2 ? 2 : quality === 1 ? 1.5 : 1]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ background }}
     >
-      <AdaptiveDpr pixelated />
+      <PerformanceMonitor bounds={() => [35, 55]} iterations={10} ms={250} onDecline={() => setQuality(q => Math.max(0, q - 1))} onIncline={() => setQuality(q => Math.min(2, q + 1))} />
       <hemisphereLight intensity={0.35} groundColor="#0a0f1a" color="#a9c7ff" />
       <ambientLight intensity={0.25} />
       {/* key */}
@@ -49,7 +50,7 @@ export function ViewerCanvas({
       <StudioEnvironment />
 
       <EffectComposer disableNormalPass>
-        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={bloom} mipmapBlur />
+        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={bloom * (quality === 2 ? 1 : quality === 1 ? 0.6 : 0)} mipmapBlur />
         <Vignette eskil={false} offset={0.15} darkness={0.75} />
       </EffectComposer>
 

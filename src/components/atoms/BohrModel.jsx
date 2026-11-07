@@ -6,7 +6,7 @@ import { bohrShellRadius, ELECTRON_SIZE } from '../../engine/atomFraming';
 const GOLDEN = 2.399963; // golden angle (rad) — spreads shell planes evenly
 
 // Single electron riding a clean circular orbit on its shell's tilted plane.
-const Electron = ({ radius, speed, offset, color, tilt, azimuth, size, trailLength, trailWidth }) => {
+const Electron = ({ radius, speed, offset, color, tilt, azimuth, size, trailLength, trailWidth, showTrail }) => {
   const ref = useRef();
   useFrame(({ clock }) => {
     if (ref.current) {
@@ -14,14 +14,15 @@ const Electron = ({ radius, speed, offset, color, tilt, azimuth, size, trailLeng
       ref.current.position.set(Math.cos(t) * radius, 0, Math.sin(t) * radius);
     }
   });
+  const electron = (
+    <mesh ref={ref}>
+      <sphereGeometry args={[size, 12, 12]} />
+      <meshBasicMaterial color={color} toneMapped={false} />
+    </mesh>
+  );
   return (
     <group rotation={[tilt, azimuth, 0]}>
-      <Trail width={trailWidth} length={trailLength} color={color} attenuation={(t) => t * t}>
-        <mesh ref={ref}>
-          <sphereGeometry args={[size, 12, 12]} />
-          <meshBasicMaterial color={color} toneMapped={false} />
-        </mesh>
-      </Trail>
+      {showTrail ? <Trail width={trailWidth} length={trailLength} color={color} attenuation={(t) => t * t}>{electron}</Trail> : electron}
     </group>
   );
 };
@@ -71,6 +72,7 @@ export const BohrModel = ({
           size: ELECTRON_SIZE,
           trailLength,
           trailWidth,
+          showTrail: count <= 8 || i === 0,
         });
       }
     });

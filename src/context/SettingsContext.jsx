@@ -28,18 +28,6 @@ export const SettingsProvider = ({ children }) => {
     setOrbitalMode(prev => prev === 'bohr' ? 'quantum' : 'bohr');
   }, []);
 
-  // Speed presets
-
-
-  // Cycle through speed presets
-  const cycleSpeed = useCallback(() => {
-    setPlaybackSpeed(prev => {
-      const currentIndex = speedPresets.indexOf(prev);
-      const nextIndex = (currentIndex + 1) % speedPresets.length;
-      return speedPresets[nextIndex];
-    });
-  }, []);
-
   // Tutorial controls
   const startTutorial = useCallback((tutorialId) => {
     setCurrentTutorial(tutorialId);
@@ -66,19 +54,16 @@ export const SettingsProvider = ({ children }) => {
     complexity,
     setComplexity,
     toggleComplexity,
-    isAdvanced: complexity === 'advanced',
 
     // Orbital mode
     orbitalMode,
     setOrbitalMode,
     toggleOrbitalMode,
-    isQuantumMode: orbitalMode === 'quantum',
 
     // Playback speed
     playbackSpeed,
     setPlaybackSpeed,
     speedPresets,
-    cycleSpeed,
 
     // Tutorial
     tutorialActive,

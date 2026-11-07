@@ -47,4 +47,3 @@ export const BOND_COLORS = {
 };
 
 // A gentle scene-wide scale so ångström coordinates read well at the default camera.
-export const SCENE_SCALE = 1.35;
