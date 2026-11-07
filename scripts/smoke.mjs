@@ -17,20 +17,22 @@ try {
     page.on('pageerror',e=>errors.push(e.message));
     page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
     const capture = async name => {
+      console.log(`Checking ${width}/${name}`);
       await page.locator('canvas').waitFor({state:'visible'});
       await page.waitForTimeout(2500);
       if(await page.getByRole('alert').count()) throw new Error(await page.getByRole('alert').allTextContents());
-      const metrics = await page.evaluate(async () => {
+      const metrics = process.env.PERF_ONLY ? await page.evaluate(async () => {
         const samples = []; let last;
-        await new Promise(resolve => { const tick = now => { if(last!==undefined)samples.push(now-last); last=now; if(samples.length>=120)resolve();else requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
+        await new Promise((resolve, reject) => { const timer = setTimeout(() => reject(new Error('Frame sampling exceeded 60 seconds')), 60000); const tick = now => { if(last!==undefined)samples.push(now-last); last=now; if(samples.length>=120){clearTimeout(timer);resolve();}else requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
         const canvas=document.querySelector('canvas');
         const gl=canvas.getContext('webgl2');
         const debug=gl?.getExtension('WEBGL_debug_renderer_info');
         const sorted=[...samples].sort((a,b)=>a-b);
         return {meanMs:samples.reduce((a,b)=>a+b,0)/samples.length,p95Ms:sorted[Math.ceil(samples.length*.95)-1],samples:samples.length,renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable',canvas:[canvas.width,canvas.height]};
-      });
+      }) : { samples: 0, note: 'Smoke only; use PERF_ONLY=1 for frame sampling' };
       measurements.push({name,width,...metrics});
-      await page.screenshot({path:`${output}/${width}-${name}.png`});
+      await writeFile(`${output}/frames.json`,JSON.stringify({browser:browser.version(),softwareRequested:process.env.SOFTWARE_WEBGL==='1',measurements},null,2));
+      await page.screenshot({timeout:30000,path:`${output}/${width}-${name}.png`});
       if(errors.length)throw new Error(`${width}/${name}: ${errors.join('\n')}`);
     };
     await page.goto(`${base}/?el=C`); await capture('carbon-bohr');
