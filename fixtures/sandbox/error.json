@@ -1,0 +1,12 @@
+{
+  "source": "sample",
+  "state": {
+    "atoms": [],
+    "bonds": [],
+    "history": []
+  },
+  "error": {
+    "code": "invalid_input",
+    "message": "Unsupported sandbox element: He"
+  }
+}
