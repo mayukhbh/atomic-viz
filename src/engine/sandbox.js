@@ -35,3 +35,44 @@ export function recognizeMolecules(atoms,bonds){
 }
 export function readDiscoveries(storage){try{const data=JSON.parse(storage.getItem('atomicviz.discoveries.v1')||'[]');return Array.isArray(data)?[...new Set(data.filter(id=>DISCOVERY_IDS.includes(id)))]:[];}catch{return [];}}
 export function saveDiscoveries(storage,ids){try{storage.setItem('atomicviz.discoveries.v1',JSON.stringify(ids));return true;}catch{return false;}}
+
+const snapshot = state => ({ atoms: state.atoms, bonds: state.bonds });
+const checkpoint = (state, next) => ({ ...next, history: [...(state.history || []), snapshot(state)].slice(-100) });
+export const createSandboxState = () => ({ atoms: [], bonds: [], history: [] });
+const validPosition = position => Array.isArray(position) && position.length === 3 && position.every(Number.isFinite);
+const validId = id => typeof id === 'string' && id.length > 0;
+export const canUndo = state => (state.history?.length || 0) > 0;
+export function undo(state) {
+  if (!canUndo(state)) return state;
+  return { ...state.history.at(-1), history: state.history.slice(0, -1) };
+}
+export function addAtom(state, atom) {
+  if (!atom || !validId(atom.id) || !SANDBOX_ELEMENTS.includes(atom.element) || !validPosition(atom.position) || state.atoms.some(a => a.id === atom.id)) {
+    throw new TypeError('Atom requires a unique id, supported element and finite 3D position');
+  }
+  return checkpoint(state, { atoms: [...state.atoms, { ...atom, position: [...atom.position], ...(atom.bonds ? { bonds: [...atom.bonds] } : {}) }], bonds: state.bonds });
+}
+export function addBond(state, bond) {
+  if (!bond || !validId(bond.id) || bond.a === bond.b || ![bond.a, bond.b].every(id => state.atoms.some(a => a.id === id))) throw new TypeError('Bond requires an id and two distinct existing atoms');
+  if (state.bonds.some(b => (b.a === bond.a && b.b === bond.b) || (b.b === bond.a && b.a === bond.b))) return state;
+  if (state.bonds.some(b => b.id === bond.id)) throw new TypeError('Bond id must be unique');
+  if ([bond.a, bond.b].some(id => state.bonds.filter(b => b.a === id || b.b === id).length >= CPK[state.atoms.find(a => a.id === id).element].valence)) throw new TypeError('Bond exceeds sandbox valence');
+  return checkpoint(state, { atoms: state.atoms, bonds: [...state.bonds, { ...bond }] });
+}
+export function deleteAtom(state, atomId) {
+  if (!state.atoms.some(a => a.id === atomId)) return state;
+  return checkpoint(state, { atoms: state.atoms.filter(a => a.id !== atomId), bonds: state.bonds.filter(b => b.a !== atomId && b.b !== atomId) });
+}
+export function breakBond(state, bondId) {
+  if (!state.bonds.some(b => b.id === bondId)) return state;
+  return checkpoint(state, { atoms: state.atoms, bonds: state.bonds.filter(b => b.id !== bondId) });
+}
+export function moveAtom(state, atomId, position) {
+  if (!validPosition(position)) throw new TypeError('Position must contain three finite numbers');
+  if (!state.atoms.some(a => a.id === atomId)) return state;
+  return { ...state, atoms: state.atoms.map(a => a.id === atomId ? { ...a, position: [...position] } : a) };
+}
+export function bondMovedState(state, atomId) {
+  const next = bondMovedAtom(state.atoms, state.bonds, atomId);
+  return next.bonds.length === state.bonds.length ? state : checkpoint(state, next);
+}
