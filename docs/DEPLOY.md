@@ -3,7 +3,7 @@
 Static Vite app, no API, database or secrets. Node >=22.12 (CI: 24).
 
 1. Import this repository into Vercel; choose the intended branch yourself.
-2. Set `SITE_URL` to the final public HTTPS origin, e.g. `https://atomic-viz.vercel.app`. It is public metadata, not a secret. Use the correct origin for each preview environment when validating crawler previews. Vercel builds fail if it is absent.
+2. Vercel supplies the public host automatically: preview builds use `VERCEL_URL`, production builds prefer `VERCEL_PROJECT_PRODUCTION_URL`. Optionally set `SITE_URL` to override the origin. These are public metadata, not secrets. Builds fail if no HTTPS origin can be resolved in production. See [Vercel system variables](https://vercel.com/docs/environment-variables/system-environment-variables).
 3. Build command `npm run build`, output `dist`; `vercel.json` supplies these.
 4. Deploy manually. Verify `/`, `/?el=Au`, `/share/Au.html?el=Au`, `/og/Au.png`, hashed assets and the response headers.
 

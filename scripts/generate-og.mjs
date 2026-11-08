@@ -1,10 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { ELEMENTS } from '../src/data/elements.js';
-const origin = process.env.SITE_URL || 'http://localhost:4173';
-const url = new URL(origin);
-if (url.pathname !== '/' || url.search || url.hash || url.username || url.password || !['http:','https:'].includes(url.protocol)) throw new Error('SITE_URL must be a plain HTTP(S) origin');
-if ((process.env.VERCEL || process.env.NODE_ENV === 'production') && (!process.env.SITE_URL || url.protocol !== 'https:')) throw new Error('SITE_URL must be set to the public HTTPS origin for production');
+import { siteOrigin } from './site-origin.mjs';
+const url = new URL(siteOrigin());
 const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 await mkdir('dist/share',{recursive:true}); await mkdir('dist/og',{recursive:true});
 for (const element of Object.values(ELEMENTS)) {

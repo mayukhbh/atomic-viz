@@ -28,4 +28,4 @@ Sample files: empty, typical water, and rejected unsupported atom with unchanged
 
 ## Element share URLs
 
-Existing `/?el=Au` app URLs remain supported. Shares use `/share/Au.html?el=Au` with static Open Graph/Twitter metadata and a redirect to `/?el=Au`. Static HTML and 1200×630 PNGs are generated for all 118 elements during build. `SITE_URL` is the public HTTPS origin used for absolute metadata URLs; local builds may use localhost and must not be mistaken for production previews.
+Existing `/?el=Au` app URLs remain supported. Shares use `/share/Au.html?el=Au` with static Open Graph/Twitter metadata and a redirect to `/?el=Au`. Static HTML and 1200×630 PNGs are generated for all 118 elements during build. `SITE_URL` overrides the public HTTPS origin used for absolute metadata URLs; otherwise Vercel system URL variables provide it; local builds may use localhost and must not be mistaken for production previews.
