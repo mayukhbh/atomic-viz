@@ -1,0 +1,81 @@
+{
+  "source": "sample",
+  "state": {
+    "atoms": [
+      {
+        "id": "oxygen",
+        "element": "O",
+        "position": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "hydrogen-1",
+        "element": "H",
+        "position": [
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "hydrogen-2",
+        "element": "H",
+        "position": [
+          -1,
+          0,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "id": "oh-1",
+        "a": "oxygen",
+        "b": "hydrogen-1"
+      },
+      {
+        "id": "oh-2",
+        "a": "oxygen",
+        "b": "hydrogen-2"
+      }
+    ],
+    "history": [
+      {
+        "atoms": [
+          {
+            "id": "oxygen",
+            "element": "O",
+            "position": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "hydrogen-1",
+            "element": "H",
+            "position": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "hydrogen-2",
+            "element": "H",
+            "position": [
+              -1,
+              0,
+              0
+            ]
+          }
+        ],
+        "bonds": []
+      }
+    ]
+  },
+  "error": null
+}

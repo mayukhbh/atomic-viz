@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, Share2 } from 'lucide-react';
-import { shareAtom } from './shareAtom';
+import { shareAtom, elementShareUrl } from './shareAtom';
 import { useSettings } from '../../context/useSettings';
-import { withElementParam } from '../../engine/deepLink';
 
 const SHARE_STATUS = {
   copied: 'Link copied',
@@ -98,7 +97,7 @@ export function AtomInfo({ activeElementData, complexity, getDescription, showPe
                 {shareStatus && SHARE_STATUS[shareStatus]}
                 {shareStatus === 'failed' && (
                   <span className="block font-mono text-xs text-white/80 break-all select-all">
-                    {withElementParam(window.location.href, activeElementData.symbol)}
+                    {elementShareUrl(window.location.href, activeElementData.symbol)}
                   </span>
                 )}
               </span>

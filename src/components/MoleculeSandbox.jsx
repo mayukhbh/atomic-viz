@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { bondMovedAtom, recognizeMolecules, readDiscoveries, saveDiscoveries, SANDBOX_ELEMENTS } from '../engine/sandbox';
+import { createSandboxState, addAtom as addSandboxAtom, moveAtom, bondMovedState, recognizeMolecules, readDiscoveries, saveDiscoveries, SANDBOX_ELEMENTS } from '../engine/sandbox';
 import { MOLECULE_LIB } from '../engine/molecules';
 import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
 import { OrbitControls, Line, Stars, Billboard } from '@react-three/drei';
@@ -88,8 +88,8 @@ const Bond = ({ start, end }) => {
 
 export const MoleculeSandbox = () => {
     const [dragging, setDragging] = useState(false);
-    const [atoms, setAtoms] = useState([]);
-    const [bonds, setBonds] = useState([]);
+    const [state, setState] = useState(createSandboxState);
+    const { atoms, bonds } = state;
     const [discovered, setDiscovered] = useState(() => {try{return readDiscoveries(localStorage);}catch{return [];}});
     const [notification, setNotification] = useState(null);
     useEffect(() => {
@@ -110,17 +110,15 @@ export const MoleculeSandbox = () => {
             position: [Math.cos(angle)*0.25, Math.sin(angle)*0.25, 0],
             bonds: []
         };
-        setAtoms(prev => [...prev, newAtom]);
+        setState(prev => addSandboxAtom(prev, newAtom));
     };
 
     const updateAtomPosition = (id, newPos) => {
-        setAtoms(prev => prev.map(atom =>
-            atom.id === id ? { ...atom, position: newPos } : atom
-        ));
+        setState(prev => moveAtom(prev, id, newPos));
     };
 
     const checkBonds = id => {
-        const next = bondMovedAtom(atoms, bonds, id); setAtoms(next.atoms); setBonds(next.bonds);
+        const next = bondMovedState(state, id); setState(next);
         const added = recognizeMolecules(next.atoms,next.bonds).filter(id=>!discovered.includes(id));
         if(added.length){const all=[...discovered,...added];setDiscovered(all);let saved=false;
           try{saved=saveDiscoveries(localStorage,all);}catch{/* Restricted storage retains session state. */}
@@ -137,8 +135,7 @@ export const MoleculeSandbox = () => {
     };
 
     const reset = () => {
-        setAtoms([]);
-        setBonds([]);
+        setState(createSandboxState());
         setNotification(null);
     };
 

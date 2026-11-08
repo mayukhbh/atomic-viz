@@ -151,7 +151,7 @@ describe('shareAtom', () => {
     window.addEventListener(ANALYTICS_EVENT, listen);
     expect(await shareAtom(gold, { nav, href })).toBe('shared');
     window.removeEventListener(ANALYTICS_EVENT, listen);
-    expect(nav.share).toHaveBeenCalledWith(expect.objectContaining({ url: 'https://atomic.test/?el=Au' }));
+    expect(nav.share).toHaveBeenCalledWith(expect.objectContaining({ url: 'https://atomic.test/share/Au.html?el=Au' }));
     expect(nav.clipboard.writeText).not.toHaveBeenCalled();
     expect(events).toEqual([expect.objectContaining({ name: 'atom_share_clicked', props: { element: 'Au', method: 'native' } })]);
   });
@@ -165,7 +165,7 @@ describe('shareAtom', () => {
   it('falls back to the clipboard when native share is missing or refused', async () => {
     const clip = { writeText: vi.fn().mockResolvedValue(undefined) };
     expect(await shareAtom(gold, { nav: { clipboard: clip }, href })).toBe('copied');
-    expect(clip.writeText).toHaveBeenCalledWith(expect.stringContaining('https://atomic.test/?el=Au'));
+    expect(clip.writeText).toHaveBeenCalledWith(expect.stringContaining('https://atomic.test/share/Au.html?el=Au'));
     const refused = { share: vi.fn().mockRejectedValue(new Error('NotAllowedError')), clipboard: clip };
     expect(await shareAtom(gold, { nav: refused, href })).toBe('copied');
   });

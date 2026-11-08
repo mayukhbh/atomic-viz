@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { COMPACT_MAX_WIDTH, FRAMING, fitDistance, shouldRefitCamera } from '../engine/atomFraming';
 import { SafeCanvas as Canvas } from './viewer/SafeCanvas';
-import { OrbitControls, Stars, AdaptiveDpr } from '@react-three/drei';
+import { OrbitControls, Stars, PerformanceMonitor } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { StudioEnvironment } from './viewer/StudioEnvironment';
 
@@ -33,14 +33,15 @@ function FitCamera({ radius }) {
 }
 
 export const Scene = ({ children, fitRadius }) => {
+    const [quality, setQuality] = useState(2);
     return (
         <Canvas
             camera={{ position: [0, 0, 10], fov: 45 }}
-            dpr={[1, 2]}
+            dpr={[1, quality === 2 ? 2 : quality === 1 ? 1.5 : 1]}
             gl={{ antialias: true, powerPreference: 'high-performance' }}
             style={{ background: 'radial-gradient(circle at 50% 30%, #0b1120 0%, #060912 55%, #04060a 100%)' }}
         >
-            <AdaptiveDpr pixelated />
+            <PerformanceMonitor bounds={() => [35, 55]} iterations={10} ms={250} onDecline={() => setQuality(q => Math.max(0, q - 1))} onIncline={() => setQuality(q => Math.min(2, q + 1))} />
             <hemisphereLight intensity={0.25} groundColor="#0a0f1a" color="#a9c7ff" />
             <ambientLight intensity={0.2} />
             <pointLight position={[10, 10, 10]} intensity={1.1} />
@@ -53,7 +54,7 @@ export const Scene = ({ children, fitRadius }) => {
             <group>{children}</group>
 
             <EffectComposer disableNormalPass>
-                <Bloom luminanceThreshold={0.3} luminanceSmoothing={0.9} intensity={0.9} mipmapBlur />
+                <Bloom luminanceThreshold={0.3} luminanceSmoothing={0.9} intensity={0.9 * (quality === 2 ? 1 : quality === 1 ? 0.6 : 0)} mipmapBlur />
                 <Vignette eskil={false} offset={0.2} darkness={0.7} />
             </EffectComposer>
 

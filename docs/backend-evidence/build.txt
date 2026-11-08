@@ -1,0 +1,38 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> atomic-viz-app@0.0.0 build
+> vite build && node scripts/generate-og.mjs
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2663 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    1.27 kB │ gzip:   0.63 kB
+dist/.vite/manifest.json                           5.00 kB │ gzip:   0.86 kB
+dist/assets/InstrumentSans-Bold-D0M8JxA1.woff     35.97 kB
+dist/assets/index-BOZ6E51W.css                    47.04 kB │ gzip:   8.61 kB
+dist/assets/play-3ZX6Yz-L.js                       0.19 kB │ gzip:   0.18 kB
+dist/assets/rotate-ccw-r15931zA.js                 0.20 kB │ gzip:   0.18 kB
+dist/assets/useDialog-w_XCETuO.js                  1.21 kB │ gzip:   0.64 kB
+dist/assets/ViewerCanvas-tgkyQSaP.js               1.55 kB │ gzip:   0.87 kB
+dist/assets/cpk-C8ZWEhKD.js                        1.60 kB │ gzip:   0.56 kB
+dist/assets/PeriodicTable-CFDOXoVg.js              3.98 kB │ gzip:   1.76 kB
+dist/assets/ExportPanel-D5kSZqmv.js                4.25 kB │ gzip:   2.03 kB
+dist/assets/MoleculeSandbox-DEVs8ZZf.js            7.08 kB │ gzip:   3.28 kB
+dist/assets/AtomBuilder-DCfCrO3l.js                8.61 kB │ gzip:   2.93 kB
+dist/assets/OrganicLab-CRuKu8DN.js                11.25 kB │ gzip:   4.24 kB
+dist/assets/molecules-BhmkpWoh.js                 12.49 kB │ gzip:   4.08 kB
+dist/assets/TutorialOverlay-CLxVpf3A.js           19.02 kB │ gzip:   5.93 kB
+dist/assets/ReactionLab-yOZeNeyG.js               42.90 kB │ gzip:  11.98 kB
+dist/assets/index-D01srQXH.js                     96.74 kB │ gzip:  31.03 kB
+dist/assets/proxy-CgJz2jxY.js                    110.95 kB │ gzip:  36.49 kB
+dist/assets/react-KNHVcdZk.js                    192.53 kB │ gzip:  60.37 kB
+dist/assets/graphics-BxiISrM3.js               1,215.79 kB │ gzip: 346.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.94s
+Generated 118 element previews for https://atomic-viz.vercel.app
