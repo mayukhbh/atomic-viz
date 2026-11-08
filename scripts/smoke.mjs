@@ -13,6 +13,8 @@ try {
   const measurements = [];
   for(const width of (process.env.PERF_ONLY ? [1440] : [1440,1024,390])) {
     const page = await browser.newPage({viewport:{width,height:width===390?844:900},deviceScaleFactor:1});
+    // CI software WebGL can block actionability while compiling a new scene.
+    page.setDefaultTimeout(process.env.SOFTWARE_WEBGL === '1' ? 120000 : 30000);
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -32,7 +34,7 @@ try {
       }) : { samples: 0, note: 'Smoke only; use PERF_ONLY=1 for frame sampling' };
       measurements.push({name,width,...metrics});
       await writeFile(`${output}/frames.json`,JSON.stringify({browser:browser.version(),softwareRequested:process.env.SOFTWARE_WEBGL==='1',measurements},null,2));
-      await page.screenshot({timeout:30000,path:`${output}/${width}-${name}.png`});
+      await page.screenshot({timeout:process.env.SOFTWARE_WEBGL === '1' ? 120000 : 30000,path:`${output}/${width}-${name}.png`});
       if(errors.length)throw new Error(`${width}/${name}: ${errors.join('\n')}`);
     };
     await page.goto(`${base}/?el=C`); await capture('carbon-bohr');
